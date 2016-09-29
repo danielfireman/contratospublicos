@@ -5,7 +5,8 @@ type Fornecedor struct {
 	Nome                string
 	ValorTotalContratos float64
 	NumTotalContratos   int64
-	Municipios          []Municipio
+	Municipios          []*Municipio
+	Partidos            []*Partido
 }
 
 type ResumoContratos struct {
