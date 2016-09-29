@@ -1,11 +1,12 @@
 package main
 
 import (
-	"os"
-	"log"
-	"github.com/julienschmidt/httprouter"
-	"net/http"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
@@ -13,7 +14,7 @@ func main() {
 	if port == "" {
 		log.Fatal("Variável de ambiente $PORT não encontrada.")
 	}
-	
+
 	router := httprouter.New()
 	router.GET("/", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		fmt.Fprintf(w, "Hellow World.")

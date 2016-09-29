@@ -1,4 +1,4 @@
-package contratospublicos
+package model
 
 type Fornecedor struct {
 	ID                  string
@@ -14,13 +14,13 @@ type ResumoContratos struct {
 }
 
 type Municipio struct {
-	Cod             string;
-	Nome            string;
-	ResumoContratos ResumoContratos;
-	SiglaPartido    string;
+	Cod             string
+	Nome            string
+	ResumoContratos ResumoContratos
+	SiglaPartido    string
 }
 
 type Partido struct {
-	Sigla           string;
-	ResumoContratos ResumoContratos;
+	Sigla           string
+	ResumoContratos ResumoContratos
 }
