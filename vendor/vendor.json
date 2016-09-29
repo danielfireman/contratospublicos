@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "0aax/qOmVxrexQc7w9+P99GH7zs=",
+			"path": "github.com/julienschmidt/httprouter",
+			"revision": "21439ef4d70ba4f3e2a5ed9249e7b03af4019b40",
+			"revisionTime": "2016-01-06T08:35:25Z"
+		}
+	],
+	"rootPath": "github.com/danielfireman/contratospublicos"
+}
