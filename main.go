@@ -133,13 +133,13 @@ func main() {
 			resultado.Situacao = dadosReceitaWs.Situacao
 			resultado.NomeReceita = dadosReceitaWs.Nome
 			resultado.Telefone = dadosReceitaWs.Telefone
-			resultado.Cnpj =dadosReceitaWs.Cnpj
+			resultado.Cnpj = dadosReceitaWs.Cnpj
 			resultado.Municipio = dadosReceitaWs.Municipio
 			resultado.UF = dadosReceitaWs.UF
 			resultado.DataAbertura = dadosReceitaWs.DataAbertura
 			resultado.NaturezaJuridica = dadosReceitaWs.NaturezaJuridica
 			resultado.NomeFantasia = dadosReceitaWs.NomeFantasia
-			resultado.UltimaAtualizacaoReceita =  dadosReceitaWs.UltimaAtualizacao
+			resultado.UltimaAtualizacaoReceita = dadosReceitaWs.UltimaAtualizacao
 			resultado.Bairro = dadosReceitaWs.Bairro
 			resultado.Logradouro = dadosReceitaWs.Logradouro
 			resultado.Numero = dadosReceitaWs.CEP
@@ -155,7 +155,7 @@ func main() {
 		fmt.Fprintf(w, string(b))
 	})
 	log.Println("Serviço inicializado na porta ", port)
-	log.Fatal(http.ListenAndServe(":" + port, router))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
 func carregaMunicipios(path string) (map[string]string, error) {
