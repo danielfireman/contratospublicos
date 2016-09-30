@@ -66,23 +66,23 @@ func main() {
 		var fornecedoresColErr error
 
 		wg := sync.WaitGroup{}
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 			c := session.DB(DB).C("fornecedores")
 			if fornecedoresColErr = c.Find(bson.M{"id": id}).One(&fornecedor); err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 			}
 		}()
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 			if err := receitaws.GetData(id, dadosReceitaWs); err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 			}
 		}()
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 			c := session.DB(DB).C(legislatura)
 			if err = c.Find(bson.M{"id": id}).One(resumo); err != nil {
