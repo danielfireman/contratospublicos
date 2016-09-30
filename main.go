@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -16,7 +17,7 @@ import (
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/receitaws"
 	"github.com/julienschmidt/httprouter"
-	"sync"
+	"github.com/newrelic/go-agent"
 )
 
 const (
@@ -36,10 +37,23 @@ func main() {
 		log.Fatal("Variável de ambiente $MONGHQ_URL obrigatória.")
 	}
 
+	nrLicence := os.Getenv("NEW_RELIC_LICENSE_KEY")
+	if nrLicence == "" {
+		log.Fatal("$NEW_RELIC_LICENSE_KEY must be set")
+	}
+	config := newrelic.NewConfig("ciframe-api", nrLicence)
+	newRelicApp, err := newrelic.NewApplication(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Monitoramento NewRelic configurado com sucesso.")
+
+	munTxn := newRelicApp.StartTransaction("load_cities", nil, nil)
 	municipios, err := carregaMunicipios(dadosMunicipiosPath)
 	if err != nil {
 		log.Fatalf("Erro carregando mapa de municípios: %q", err)
 	}
+	munTxn .End()
 	fmt.Println("Municípios carregados com sucesso.")
 
 	mainSession, err := mgo.Dial(dbURI)
@@ -49,6 +63,9 @@ func main() {
 
 	router := httprouter.New()
 	router.GET("/api/v1/fornecedor/:id", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		txn := newRelicApp.StartTransaction("fornecedor", w, r)
+		defer txn.End()
+
 		session := mainSession.Copy()
 		defer session.Close()
 
@@ -63,20 +80,28 @@ func main() {
 		resumo := &model.ResumoContratosFornecedor{}
 		dadosReceitaWs := &receitaws.DadosReceitaWS{}
 
-		var fornecedoresColErr error
+		fSeg := newrelic.StartSegment(txn, "fornecedores_collection_query")
+		c := session.DB(DB).C("fornecedores")
+		if err = c.Find(bson.M{"id": id}).One(&fornecedor); err != nil {
+			log.Println("Err id:'%s' err:'%q'", id, err)
+			if err == mgo.ErrNotFound {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			fSeg.End()
+
+			// Usando nosso BD como fonte autoritativa para buscas. Se não existe lá, nós
+			// não conhecemos.
+			return
+		}
+		fSeg.End()
 
 		wg := sync.WaitGroup{}
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			c := session.DB(DB).C("fornecedores")
-			if fornecedoresColErr = c.Find(bson.M{"id": id}).One(&fornecedor); err != nil {
-				log.Println("Err id:'%s' err:'%q'", id, err)
-			}
-		}()
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+			defer newrelic.StartSegment(txn, "receitaws_query").End()
 			if err := receitaws.GetData(id, dadosReceitaWs); err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 			}
@@ -84,21 +109,13 @@ func main() {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			defer newrelic.StartSegment(txn, legislatura + "_collection_query").End()
 			c := session.DB(DB).C(legislatura)
 			if err = c.Find(bson.M{"id": id}).One(resumo); err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 			}
 		}()
 		wg.Wait()
-
-		if fornecedoresColErr != nil {
-			if fornecedoresColErr == mgo.ErrNotFound {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-			}
-			return
-		}
 
 		// Adicionando nomes aos municipios.
 		for _, m := range resumo.Municipios {
@@ -146,7 +163,9 @@ func main() {
 			resultado.CEP = dadosReceitaWs.CEP
 		}
 
+		marshallSeg := newrelic.StartSegment(txn, "marshall_results")
 		b, err := json.Marshal(resultado)
+		marshallSeg.End()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -155,7 +174,7 @@ func main() {
 		fmt.Fprintf(w, string(b))
 	})
 	log.Println("Serviço inicializado na porta ", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":" + port, router))
 }
 
 func carregaMunicipios(path string) (map[string]string, error) {

@@ -9,6 +9,42 @@
 			"revisionTime": "2016-01-06T08:35:25Z"
 		},
 		{
+			"checksumSHA1": "sPK/lNo0SgZ6TjYG3VlQcHHe2sE=",
+			"path": "github.com/newrelic/go-agent",
+			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
+			"revisionTime": "2016-09-07T20:43:26Z"
+		},
+		{
+			"checksumSHA1": "ccPaI/mAd7tT33Dk1LAOdG2KU7I=",
+			"path": "github.com/newrelic/go-agent/internal",
+			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
+			"revisionTime": "2016-09-07T20:43:26Z"
+		},
+		{
+			"checksumSHA1": "mkbupMdy+cF7xyo8xW0A6Bq15k4=",
+			"path": "github.com/newrelic/go-agent/internal/jsonx",
+			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
+			"revisionTime": "2016-09-07T20:43:26Z"
+		},
+		{
+			"checksumSHA1": "ywxlVKtGArJ2vDfH1rAqEFwSGds=",
+			"path": "github.com/newrelic/go-agent/internal/logger",
+			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
+			"revisionTime": "2016-09-07T20:43:26Z"
+		},
+		{
+			"checksumSHA1": "joSrZEftQjYC8nSxaqClUkQEOEY=",
+			"path": "github.com/newrelic/go-agent/internal/sysinfo",
+			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
+			"revisionTime": "2016-09-07T20:43:26Z"
+		},
+		{
+			"checksumSHA1": "c2JSKesj3tHYgzIF3QL37WfHWG8=",
+			"path": "github.com/newrelic/go-agent/internal/utilization",
+			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
+			"revisionTime": "2016-09-07T20:43:26Z"
+		},
+		{
 			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
 			"path": "gopkg.in/mgo.v2",
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
