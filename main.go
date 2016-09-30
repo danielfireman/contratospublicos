@@ -14,7 +14,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/danielfireman/contratospublicos/model"
+	"github.com/danielfireman/contratospublicos/receitaws"
 	"github.com/julienschmidt/httprouter"
+	"sync"
 )
 
 const (
@@ -50,31 +52,53 @@ func main() {
 		session := mainSession.Copy()
 		defer session.Close()
 
-		fornecedor := &model.DadosFornecedor{}
 		id := p.ByName("id")
-		func() {
-			c := session.DB(DB).C("fornecedores")
-			if err = c.Find(bson.M{"id": id}).One(&fornecedor); err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				log.Println("Err id:'%s' err:''", id, err)
-				return
-			}
-		}()
 
 		legislatura := r.URL.Query().Get("legislatura")
 		if legislatura == "" {
 			legislatura = "2012"
 		}
 
-		resumo := model.ResumoContratosFornecedor{}
-		func() {
-			c := session.DB(DB).C(legislatura)
-			if err = c.Find(bson.M{"id": id}).One(&resumo); err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				log.Println("Err id:'%s' err:''", id, err)
-				return
+		fornecedor := &model.DadosFornecedor{}
+		resumo := &model.ResumoContratosFornecedor{}
+		dadosReceitaWs := &receitaws.DadosReceitaWS{}
+
+		var fornecedoresColErr error
+
+		wg := sync.WaitGroup{}
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+			c := session.DB(DB).C("fornecedores")
+			if fornecedoresColErr = c.Find(bson.M{"id": id}).One(&fornecedor); err != nil {
+				log.Println("Err id:'%s' err:'%q'", id, err)
 			}
 		}()
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+			if err := receitaws.GetData(id, dadosReceitaWs); err != nil {
+				log.Println("Err id:'%s' err:'%q'", id, err)
+			}
+		}()
+		go func() {
+			wg.Add(1)
+			defer wg.Done()
+			c := session.DB(DB).C(legislatura)
+			if err = c.Find(bson.M{"id": id}).One(resumo); err != nil {
+				log.Println("Err id:'%s' err:'%q'", id, err)
+			}
+		}()
+		wg.Wait()
+
+		if fornecedoresColErr != nil {
+			if fornecedoresColErr == mgo.ErrNotFound {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			return
+		}
 
 		// Adicionando nomes aos municipios.
 		for _, m := range resumo.Municipios {
@@ -83,7 +107,8 @@ func main() {
 				m.Nome = nome
 			}
 		}
-		b, err := json.Marshal(&model.Fornecedor{
+
+		resultado := &model.Fornecedor{
 			ID:             fornecedor.ID,
 			Nome:           fornecedor.Nome,
 			Legislatura:    legislatura,
@@ -91,7 +116,37 @@ func main() {
 			NumContratos:   resumo.NumContratos,
 			Municipios:     resumo.Municipios,
 			Partidos:       resumo.Partidos,
-		})
+		}
+
+		if resumo != nil {
+			resultado.ValorContratos = resumo.ValorContratos
+			resultado.NumContratos = resumo.NumContratos
+			resultado.Municipios = resumo.Municipios
+			resultado.Partidos = resumo.Partidos
+		}
+
+		if dadosReceitaWs != nil {
+			resultado.AtividadePrincipal = dadosReceitaWs.AtividadePrincipal
+			resultado.DataSituacao = dadosReceitaWs.DataSituacao
+			resultado.Tipo = dadosReceitaWs.Tipo
+			resultado.AtividadesSecundarias = dadosReceitaWs.AtividadesSecundarias
+			resultado.Situacao = dadosReceitaWs.Situacao
+			resultado.NomeReceita = dadosReceitaWs.Nome
+			resultado.Telefone = dadosReceitaWs.Telefone
+			resultado.Cnpj =dadosReceitaWs.Cnpj
+			resultado.Municipio = dadosReceitaWs.Municipio
+			resultado.UF = dadosReceitaWs.UF
+			resultado.DataAbertura = dadosReceitaWs.DataAbertura
+			resultado.NaturezaJuridica = dadosReceitaWs.NaturezaJuridica
+			resultado.NomeFantasia = dadosReceitaWs.NomeFantasia
+			resultado.UltimaAtualizacaoReceita =  dadosReceitaWs.UltimaAtualizacao
+			resultado.Bairro = dadosReceitaWs.Bairro
+			resultado.Logradouro = dadosReceitaWs.Logradouro
+			resultado.Numero = dadosReceitaWs.CEP
+			resultado.CEP = dadosReceitaWs.CEP
+		}
+
+		b, err := json.Marshal(resultado)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -100,7 +155,7 @@ func main() {
 		fmt.Fprintf(w, string(b))
 	})
 	log.Println("Serviço inicializado na porta ", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":" + port, router))
 }
 
 func carregaMunicipios(path string) (map[string]string, error) {

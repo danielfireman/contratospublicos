@@ -1,15 +1,36 @@
 package model
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+	"github.com/danielfireman/contratospublicos/receitaws"
+)
 
 type Fornecedor struct {
-	ID             string       `json:"id"`
-	Nome           string       `json:"nome"`
-	Legislatura    string       `json:"legislatura"`
-	ValorContratos float64      `json:"valor_contratos"`
-	NumContratos   int64        `json:"num_contratos"`
-	Municipios     []*Municipio `json:"municipios"`
-	Partidos       []*Partido   `json:"partidos"`
+	ID                    string       `json:"id"`
+	Nome                  string       `json:"nome"`
+	Legislatura           string       `json:"legislatura"`
+	ValorContratos        float64      `json:"valor_contratos"`
+	NumContratos          int64        `json:"num_contratos"`
+	AtividadePrincipal    []*receitaws.Atividade        `json:"atividade_principal"`
+	Cnpj string `json:"cnpj"`
+	Bairro string `json:"bairro"`
+	Logradouro string `json:"logradouro"`
+	Numero string `json:"numero"`
+	CEP string `json:"cep"`
+	Municipio string `json:"municipio"`
+	UF string `json:"uf"`
+	DataAbertura string `json:"abertura"`
+	NaturezaJuridica string `json:"natureza_juridica"`
+	NomeFantasia string `json:"nome_fantasia"`
+	DataSituacao          string `json:"data_situacao"`
+	Tipo                  string `json:"tipo"`
+	AtividadesSecundarias []*receitaws.Atividade `json:"atividades_secundarias"`
+	Situacao              string `json:"situacao"`
+	NomeReceita           string `json:"nome_receita"`
+	Telefone              string `json:"telefone"`
+	UltimaAtualizacaoReceita string `json:"ultima_atualizacao_receita"`
+	Municipios            []*Municipio `json:"municipios"`
+	Partidos              []*Partido   `json:"partidos"`
 }
 
 type DadosFornecedor struct {
