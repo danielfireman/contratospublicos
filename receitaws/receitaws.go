@@ -1,10 +1,12 @@
 package receitaws
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 type DadosReceitaWS struct {
@@ -37,21 +39,35 @@ type Atividade struct {
 	Code string `json:"code"`
 }
 
-func GetData(id string, ret *DadosReceitaWS) error {
-	resp, err := http.Get("http://receitaws.com.br/v1/cnpj/" + id)
+const (
+	timeout = 500 * time.Millisecond
+	url     = "http://receitaws.com.br/v1/cnpj/"
+)
+
+var client = http.DefaultClient
+
+func Fetch(ctx context.Context, id string) (interface{}, error) {
+	timeoutCtx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	req, err := http.NewRequest("GET", url+id, nil)
+	req.WithContext(timeoutCtx)
+	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	ret := &DadosReceitaWS{}
 	if err := json.Unmarshal(body, ret); err != nil {
-		return err
+		return nil, err
 	}
 	if ret.Status != "OK" {
-		return fmt.Errorf("Error calling receitaws: '%s'", ret.Message)
+		return nil, fmt.Errorf("Error calling receitaws: '%s'", ret.Message)
 	}
-	return nil
+	return ret, nil
 }

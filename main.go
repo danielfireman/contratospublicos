@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -53,7 +54,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Erro carregando mapa de municípios: %q", err)
 	}
-	munTxn .End()
+	munTxn.End()
 	fmt.Println("Municípios carregados com sucesso.")
 
 	mainSession, err := mgo.Dial(dbURI)
@@ -78,7 +79,7 @@ func main() {
 
 		fornecedor := &model.DadosFornecedor{}
 		resumo := &model.ResumoContratosFornecedor{}
-		dadosReceitaWs := &receitaws.DadosReceitaWS{}
+		var dadosReceitaWs *receitaws.DadosReceitaWS
 
 		fSeg := newrelic.StartSegment(txn, "fornecedores_collection_query")
 		c := session.DB(DB).C("fornecedores")
@@ -97,19 +98,23 @@ func main() {
 		}
 		fSeg.End()
 
+		ctx := context.Background()
 		wg := sync.WaitGroup{}
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			defer newrelic.StartSegment(txn, "receitaws_query").End()
-			if err := receitaws.GetData(id, dadosReceitaWs); err != nil {
+			v, err := receitaws.Fetch(ctx, id)
+			if err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
+				return
 			}
+			dadosReceitaWs = v.(*receitaws.DadosReceitaWS)
 		}()
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			defer newrelic.StartSegment(txn, legislatura + "_collection_query").End()
+			defer newrelic.StartSegment(txn, legislatura+"_collection_query").End()
 			c := session.DB(DB).C(legislatura)
 			if err = c.Find(bson.M{"id": id}).One(resumo); err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
@@ -174,7 +179,7 @@ func main() {
 		fmt.Fprintf(w, string(b))
 	})
 	log.Println("Serviço inicializado na porta ", port)
-	log.Fatal(http.ListenAndServe(":" + port, router))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
 func carregaMunicipios(path string) (map[string]string, error) {
