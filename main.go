@@ -79,7 +79,6 @@ func main() {
 
 		fornecedor := &model.DadosFornecedor{}
 		resumo := &model.ResumoContratosFornecedor{}
-		var dadosReceitaWs *receitaws.DadosReceitaWS
 
 		fSeg := newrelic.StartSegment(txn, "fornecedores_collection_query")
 		c := session.DB(DB).C("fornecedores")
@@ -98,6 +97,12 @@ func main() {
 		}
 		fSeg.End()
 
+		resultado := &model.Fornecedor{
+			ID:          fornecedor.ID,
+			Nome:        fornecedor.Nome,
+			Legislatura: legislatura,
+		}
+
 		ctx := context.Background()
 		wg := sync.WaitGroup{}
 		wg.Add(1)
@@ -109,7 +114,25 @@ func main() {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 				return
 			}
-			dadosReceitaWs = v.(*receitaws.DadosReceitaWS)
+			dr := v.(*receitaws.DadosReceitaWS)
+			resultado.AtividadePrincipal = dr.AtividadePrincipal
+			resultado.DataSituacao = dr.DataSituacao
+			resultado.Tipo = dr.Tipo
+			resultado.AtividadesSecundarias = dr.AtividadesSecundarias
+			resultado.Situacao = dr.Situacao
+			resultado.NomeReceita = dr.Nome
+			resultado.Telefone = dr.Telefone
+			resultado.Cnpj = dr.Cnpj
+			resultado.Municipio = dr.Municipio
+			resultado.UF = dr.UF
+			resultado.DataAbertura = dr.DataAbertura
+			resultado.NaturezaJuridica = dr.NaturezaJuridica
+			resultado.NomeFantasia = dr.NomeFantasia
+			resultado.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
+			resultado.Bairro = dr.Bairro
+			resultado.Logradouro = dr.Logradouro
+			resultado.Numero = dr.CEP
+			resultado.CEP = dr.CEP
 		}()
 		wg.Add(1)
 		go func() {
@@ -130,42 +153,11 @@ func main() {
 			}
 		}
 
-		resultado := &model.Fornecedor{
-			ID:             fornecedor.ID,
-			Nome:           fornecedor.Nome,
-			Legislatura:    legislatura,
-			ValorContratos: resumo.ValorContratos,
-			NumContratos:   resumo.NumContratos,
-			Municipios:     resumo.Municipios,
-			Partidos:       resumo.Partidos,
-		}
-
 		if resumo != nil {
 			resultado.ValorContratos = resumo.ValorContratos
 			resultado.NumContratos = resumo.NumContratos
 			resultado.Municipios = resumo.Municipios
 			resultado.Partidos = resumo.Partidos
-		}
-
-		if dadosReceitaWs != nil {
-			resultado.AtividadePrincipal = dadosReceitaWs.AtividadePrincipal
-			resultado.DataSituacao = dadosReceitaWs.DataSituacao
-			resultado.Tipo = dadosReceitaWs.Tipo
-			resultado.AtividadesSecundarias = dadosReceitaWs.AtividadesSecundarias
-			resultado.Situacao = dadosReceitaWs.Situacao
-			resultado.NomeReceita = dadosReceitaWs.Nome
-			resultado.Telefone = dadosReceitaWs.Telefone
-			resultado.Cnpj = dadosReceitaWs.Cnpj
-			resultado.Municipio = dadosReceitaWs.Municipio
-			resultado.UF = dadosReceitaWs.UF
-			resultado.DataAbertura = dadosReceitaWs.DataAbertura
-			resultado.NaturezaJuridica = dadosReceitaWs.NaturezaJuridica
-			resultado.NomeFantasia = dadosReceitaWs.NomeFantasia
-			resultado.UltimaAtualizacaoReceita = dadosReceitaWs.UltimaAtualizacao
-			resultado.Bairro = dadosReceitaWs.Bairro
-			resultado.Logradouro = dadosReceitaWs.Logradouro
-			resultado.Numero = dadosReceitaWs.CEP
-			resultado.CEP = dadosReceitaWs.CEP
 		}
 
 		marshallSeg := newrelic.StartSegment(txn, "marshall_results")
