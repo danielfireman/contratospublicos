@@ -62,6 +62,7 @@ func Fetch(ctx context.Context, id string) (interface{}, error) {
 		return nil, err
 	}
 
+	// TODO(danielfireman): Usar sync.Pool
 	ret := &DadosReceitaWS{}
 	if err := json.Unmarshal(body, ret); err != nil {
 		return nil, err
