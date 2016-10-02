@@ -94,7 +94,7 @@ func AtualizaFornecedor(f *model.Fornecedor, i interface{}) {
 	f.Numero = dr.CEP
 	f.CEP = dr.CEP
 	for _, a := range dr.AtividadePrincipal {
-		f.AtividadePrincipal = append(f.AtividadePrincipal, &model.Atividade{
+		f.AtividadesPrincipais = append(f.AtividadesPrincipais, &model.Atividade{
 			Text: a.Text,
 			Code: a.Code,
 		})

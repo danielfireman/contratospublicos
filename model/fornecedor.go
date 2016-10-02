@@ -4,7 +4,6 @@ type Fornecedor struct {
 	ID                       string                     `json:"id"`
 	Nome                     string                     `json:"nome"`
 	Legislatura              string                     `json:"legislatura"`
-	AtividadePrincipal       []*Atividade               `json:"atividade_principal"`
 	Cnpj                     string                     `json:"cnpj"`
 	Bairro                   string                     `json:"bairro"`
 	Logradouro               string                     `json:"logradouro"`
@@ -17,11 +16,12 @@ type Fornecedor struct {
 	NomeFantasia             string                     `json:"nome_fantasia"`
 	DataSituacao             string                     `json:"data_situacao"`
 	Tipo                     string                     `json:"tipo"`
-	AtividadesSecundarias    []*Atividade               `json:"atividades_secundarias"`
 	Situacao                 string                     `json:"situacao"`
 	NomeReceita              string                     `json:"nome_receita"`
 	Telefone                 string                     `json:"telefone"`
 	UltimaAtualizacaoReceita string                     `json:"ultima_atualizacao_receita"`
+	AtividadesPrincipais     []*Atividade               `json:"atividades_principais"`
+	AtividadesSecundarias    []*Atividade               `json:"atividades_secundarias"`
 	ResumoContratos          *ResumoContratosFornecedor `json:"resumo_contratos"`
 }
 
