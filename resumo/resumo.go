@@ -9,15 +9,13 @@ import (
 	"log"
 	"os"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-
 	"github.com/danielfireman/contratospublicos/fetcher"
 	"github.com/danielfireman/contratospublicos/model"
+	"github.com/danielfireman/contratospublicos/store"
 )
 
 const (
-	DB                  = "heroku_q6gnv76m"
+	db                  = "heroku_q6gnv76m"
 	dadosMunicipiosPath = "dados_municipios.csv"
 )
 
@@ -40,25 +38,20 @@ func init() {
 }
 
 type resumo struct {
-	session     *mgo.Session
+	store       store.Store
 	legislatura string
 }
 
-func FetcherFromMongoDB(session *mgo.Session, legislatura string) fetcher.Fetcher {
-	return &resumo{session, legislatura}
+func Fetcher(s store.Store, legislatura string) fetcher.Fetcher {
+	return &resumo{s, legislatura}
 }
 
 func (r *resumo) Fetch(ctx context.Context, id string) (interface{}, error) {
-	reqSession := r.session.Copy()
-	defer reqSession.Close()
-
 	// TODO(danielfireman): Usar um sync.Pool
 	ret := &model.ResumoContratosFornecedor{}
-	c := reqSession.DB(DB).C(r.legislatura)
-	if err := c.Find(bson.M{"id": id}).One(ret); err != nil {
+	if err := r.store.FindByID(db, r.legislatura, id, ret); err != nil {
 		return nil, err
 	}
-
 	// Adicionando nomes aos municipios.
 	for _, m := range ret.Municipios {
 		nome, ok := municipios[m.Cod]

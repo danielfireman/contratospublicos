@@ -14,10 +14,9 @@ import (
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/receitaws"
 	"github.com/danielfireman/contratospublicos/resumo"
+	"github.com/danielfireman/contratospublicos/store"
 	"github.com/julienschmidt/httprouter"
 	"github.com/newrelic/go-agent"
-
-	"gopkg.in/mgo.v2"
 )
 
 const (
@@ -30,9 +29,9 @@ func main() {
 		log.Fatal("Variável de ambiente $PORT obrigatória.")
 	}
 
-	dbURI := os.Getenv("MONGODB_URI")
-	if dbURI == "" {
-		log.Fatal("Variável de ambiente $MONGHQ_URL obrigatória.")
+	mongoDBStore, err := store.MongoDB(os.Getenv("MONGODB_URI"))
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	nrLicence := os.Getenv("NEW_RELIC_LICENSE_KEY")
@@ -45,11 +44,6 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("Monitoramento NewRelic configurado com sucesso.")
-
-	mainSession, err := mgo.Dial(dbURI)
-	if err != nil {
-		log.Fatalf("Erro carregando mapa de municípios: %q", err)
-	}
 
 	router := httprouter.New()
 	router.GET("/api/v1/fornecedor/:id", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -67,7 +61,7 @@ func main() {
 		// Usando nosso BD como fonte autoritativa para buscas. Se não existe lá, nós
 		// não conhecemos. Por isso, essa chamada é síncrona.
 		fSeg := newrelic.StartSegment(txn, "fornecedores_collection_query")
-		f, err := fornecedor.FetcherFromMongoDB(mainSession).Fetch(ctx, id)
+		f, err := fornecedor.Fetcher(mongoDBStore).Fetch(ctx, id)
 		if err != nil {
 			if fetcher.IsNotFound(err) {
 				w.WriteHeader(http.StatusNotFound)
@@ -121,7 +115,7 @@ func main() {
 		go func(res *model.Fornecedor) {
 			defer wg.Done()
 			defer newrelic.StartSegment(txn, legislatura+"_collection_query").End()
-			r, err := resumo.FetcherFromMongoDB(mainSession, legislatura).Fetch(ctx, id)
+			r, err := resumo.Fetcher(mongoDBStore, legislatura).Fetch(ctx, id)
 			if err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 				return

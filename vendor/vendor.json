@@ -45,6 +45,18 @@
 			"revisionTime": "2016-09-07T20:43:26Z"
 		},
 		{
+			"checksumSHA1": "1whKo2sIMemLR6Ked08dE/+sRc8=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "2b15294402a895a4224659d181866f545991021e",
+			"revisionTime": "2015-09-29T18:35:40Z"
+		},
+		{
+			"checksumSHA1": "kYohRlsxMkEXl4JFU9ZNyIjo9bk=",
+			"path": "github.com/stretchr/testify/mock",
+			"revision": "2b15294402a895a4224659d181866f545991021e",
+			"revisionTime": "2015-09-29T18:35:40Z"
+		},
+		{
 			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
 			"path": "gopkg.in/mgo.v2",
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
