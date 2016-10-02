@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"fmt"
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -16,7 +15,6 @@ func Test(t *testing.T) {
 
 	s := &mockStore{}
 	s.On("FindByID", db, table, id, mock.Anything).Run(func(args mock.Arguments) {
-		fmt.Print("Chamou")
 		args[3].(*model.DadosFornecedor).ID = want.ID
 		args[3].(*model.DadosFornecedor).Nome = want.Nome
 	}).Return(nil)
