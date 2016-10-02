@@ -10,7 +10,10 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/danielfireman/contratospublicos/model"
+	"github.com/danielfireman/contratospublicos/resumo"
+
 	"gopkg.in/mgo.v2"
 )
 
@@ -31,7 +34,7 @@ const (
 )
 
 type dadosFornecedor struct {
-	fornecedor *model.DadosFornecedor
+	fornecedor *fornecedor.FornecedorDB
 	resumo     map[string]*resumoFornecedor
 }
 
@@ -71,7 +74,7 @@ func main() {
 		dados, ok := dadosFornecedores[id]
 		if !ok {
 			dados = &dadosFornecedor{
-				fornecedor: &model.DadosFornecedor{
+				fornecedor: &fornecedor.FornecedorDB{
 					ID:   id,
 					Nome: linha[NOME_FORNECEDOR],
 				},
@@ -141,7 +144,7 @@ func main() {
 	for _, d := range dadosFornecedores {
 		fornecedores = append(fornecedores, d.fornecedor)
 		for l, r := range d.resumo {
-			resumo := &model.ResumoContratosFornecedor{
+			resumo := &resumo.ResumoContratosDB{
 				ID:             d.fornecedor.ID,
 				ValorContratos: r.valor,
 				NumContratos:   r.num,

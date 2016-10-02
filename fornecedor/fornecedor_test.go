@@ -4,19 +4,18 @@ import (
 	"context"
 	"testing"
 
-	"github.com/danielfireman/contratospublicos/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 func Test(t *testing.T) {
 	id := "id"
-	want := &model.DadosFornecedor{ID: id, Nome: "foo"}
+	want := &FornecedorDB{ID: id, Nome: "foo"}
 
 	s := &mockStore{}
 	s.On("FindByID", db, table, id, mock.Anything).Run(func(args mock.Arguments) {
-		args[3].(*model.DadosFornecedor).ID = want.ID
-		args[3].(*model.DadosFornecedor).Nome = want.Nome
+		args[3].(*FornecedorDB).ID = want.ID
+		args[3].(*FornecedorDB).Nome = want.Nome
 	}).Return(nil)
 
 	f := fornecedorFetcher{s}

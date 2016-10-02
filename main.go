@@ -58,6 +58,11 @@ func main() {
 			legislatura = "2012"
 		}
 
+		resultado := &model.Fornecedor{
+			ID:          id,
+			Legislatura: legislatura,
+		}
+
 		// Usando nosso BD como fonte autoritativa para buscas. Se não existe lá, nós
 		// não conhecemos. Por isso, essa chamada é síncrona.
 		fSeg := newrelic.StartSegment(txn, "fornecedores_collection_query")
@@ -72,13 +77,8 @@ func main() {
 			fSeg.End()
 			return
 		}
+		fornecedor.AtualizaFornecedor(resultado, f)
 		fSeg.End()
-
-		resultado := &model.Fornecedor{
-			ID:          f.(*model.DadosFornecedor).ID,
-			Nome:        f.(*model.DadosFornecedor).Nome,
-			Legislatura: legislatura,
-		}
 
 		// Pegando dados remotos de forma concorrente.
 		wg := sync.WaitGroup{}
@@ -91,25 +91,8 @@ func main() {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 				return
 			}
-			dr := v.(*receitaws.DadosReceitaWS)
-			res.AtividadePrincipal = dr.AtividadePrincipal
-			res.DataSituacao = dr.DataSituacao
-			res.Tipo = dr.Tipo
-			res.AtividadesSecundarias = dr.AtividadesSecundarias
-			res.Situacao = dr.Situacao
-			res.NomeReceita = dr.Nome
-			res.Telefone = dr.Telefone
-			res.Cnpj = dr.Cnpj
-			res.Municipio = dr.Municipio
-			res.UF = dr.UF
-			res.DataAbertura = dr.DataAbertura
-			res.NaturezaJuridica = dr.NaturezaJuridica
-			res.NomeFantasia = dr.NomeFantasia
-			res.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
-			res.Bairro = dr.Bairro
-			res.Logradouro = dr.Logradouro
-			res.Numero = dr.CEP
-			res.CEP = dr.CEP
+			receitaws.AtualizaFornecedor(res, v)
+
 		}(resultado)
 		wg.Add(1)
 		go func(res *model.Fornecedor) {
@@ -120,11 +103,7 @@ func main() {
 				log.Println("Err id:'%s' err:'%q'", id, err)
 				return
 			}
-			rcf := r.(*model.ResumoContratosFornecedor)
-			res.ValorContratos = rcf.ValorContratos
-			res.NumContratos = rcf.NumContratos
-			res.Municipios = rcf.Municipios
-			res.Partidos = rcf.Partidos
+			resumo.AtualizaFornecedor(res, r)
 		}(resultado)
 		wg.Wait()
 

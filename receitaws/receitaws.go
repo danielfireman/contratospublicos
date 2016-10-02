@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/danielfireman/contratospublicos/model"
 )
 
 type DadosReceitaWS struct {
@@ -71,4 +73,36 @@ func Fetch(ctx context.Context, id string) (interface{}, error) {
 		return nil, fmt.Errorf("Error calling receitaws: '%s'", ret.Message)
 	}
 	return ret, nil
+}
+
+func AtualizaFornecedor(f *model.Fornecedor, i interface{}) {
+	dr := i.(*DadosReceitaWS)
+	f.DataSituacao = dr.DataSituacao
+	f.Tipo = dr.Tipo
+	f.Situacao = dr.Situacao
+	f.NomeReceita = dr.Nome
+	f.Telefone = dr.Telefone
+	f.Cnpj = dr.Cnpj
+	f.Municipio = dr.Municipio
+	f.UF = dr.UF
+	f.DataAbertura = dr.DataAbertura
+	f.NaturezaJuridica = dr.NaturezaJuridica
+	f.NomeFantasia = dr.NomeFantasia
+	f.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
+	f.Bairro = dr.Bairro
+	f.Logradouro = dr.Logradouro
+	f.Numero = dr.CEP
+	f.CEP = dr.CEP
+	for _, a := range dr.AtividadePrincipal {
+		f.AtividadePrincipal = append(f.AtividadePrincipal, &model.Atividade{
+			Text: a.Text,
+			Code: a.Code,
+		})
+	}
+	for _, a := range dr.AtividadesSecundarias {
+		f.AtividadesSecundarias = append(f.AtividadesSecundarias, &model.Atividade{
+			Text: a.Text,
+			Code: a.Code,
+		})
+	}
 }

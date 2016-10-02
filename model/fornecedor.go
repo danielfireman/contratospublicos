@@ -1,51 +1,40 @@
 package model
 
-import (
-	"github.com/danielfireman/contratospublicos/receitaws"
-	"gopkg.in/mgo.v2/bson"
-)
-
 type Fornecedor struct {
-	ID                       string                 `json:"id"`
-	Nome                     string                 `json:"nome"`
-	Legislatura              string                 `json:"legislatura"`
-	ValorContratos           float64                `json:"valor_contratos"`
-	NumContratos             int64                  `json:"num_contratos"`
-	AtividadePrincipal       []*receitaws.Atividade `json:"atividade_principal"`
-	Cnpj                     string                 `json:"cnpj"`
-	Bairro                   string                 `json:"bairro"`
-	Logradouro               string                 `json:"logradouro"`
-	Numero                   string                 `json:"numero"`
-	CEP                      string                 `json:"cep"`
-	Municipio                string                 `json:"municipio"`
-	UF                       string                 `json:"uf"`
-	DataAbertura             string                 `json:"abertura"`
-	NaturezaJuridica         string                 `json:"natureza_juridica"`
-	NomeFantasia             string                 `json:"nome_fantasia"`
-	DataSituacao             string                 `json:"data_situacao"`
-	Tipo                     string                 `json:"tipo"`
-	AtividadesSecundarias    []*receitaws.Atividade `json:"atividades_secundarias"`
-	Situacao                 string                 `json:"situacao"`
-	NomeReceita              string                 `json:"nome_receita"`
-	Telefone                 string                 `json:"telefone"`
-	UltimaAtualizacaoReceita string                 `json:"ultima_atualizacao_receita"`
-	Municipios               []*Municipio           `json:"municipios"`
-	Partidos                 []*Partido             `json:"partidos"`
+	ID                       string                     `json:"id"`
+	Nome                     string                     `json:"nome"`
+	Legislatura              string                     `json:"legislatura"`
+	AtividadePrincipal       []*Atividade               `json:"atividade_principal"`
+	Cnpj                     string                     `json:"cnpj"`
+	Bairro                   string                     `json:"bairro"`
+	Logradouro               string                     `json:"logradouro"`
+	Numero                   string                     `json:"numero"`
+	CEP                      string                     `json:"cep"`
+	Municipio                string                     `json:"municipio"`
+	UF                       string                     `json:"uf"`
+	DataAbertura             string                     `json:"abertura"`
+	NaturezaJuridica         string                     `json:"natureza_juridica"`
+	NomeFantasia             string                     `json:"nome_fantasia"`
+	DataSituacao             string                     `json:"data_situacao"`
+	Tipo                     string                     `json:"tipo"`
+	AtividadesSecundarias    []*Atividade               `json:"atividades_secundarias"`
+	Situacao                 string                     `json:"situacao"`
+	NomeReceita              string                     `json:"nome_receita"`
+	Telefone                 string                     `json:"telefone"`
+	UltimaAtualizacaoReceita string                     `json:"ultima_atualizacao_receita"`
+	ResumoContratos          *ResumoContratosFornecedor `json:"resumo_contratos"`
 }
 
-type DadosFornecedor struct {
-	BSONID bson.ObjectId `bson:"_id,omitempty"`
-	ID     string        `bson:"id,omitempty"`
-	Nome   string        `bson:"nome,omitempty"`
+type Atividade struct {
+	Text string `json:"text"`
+	Code string `json:"code"`
 }
 
 type ResumoContratosFornecedor struct {
-	BSONID         bson.ObjectId `bson:"_id,omitempty"`
-	ID             string        `bson:"id,omitempty"`
-	ValorContratos float64       `bson:"valor_contratos,omitempty"`
-	NumContratos   int64         `bson:"num_contratos,omitempty"`
-	Municipios     []*Municipio  `bson:"municipios,omitempty"`
-	Partidos       []*Partido    `bson:"partidos,omitempty"`
+	ValorContratos float64      `json:"valor_contratos"`
+	NumContratos   int64        `json:"num_contratos"`
+	Municipios     []*Municipio `json:"municipios"`
+	Partidos       []*Partido   `json:"partidos"`
 }
 
 type ResumoContratos struct {
