@@ -15,4 +15,4 @@ script:
  - $GOPATH/bin/overalls -project=github.com/danielfireman/contratospublicos -covermode=count -ignore=.git,vendor -debug
 
 after_success:
- - $GOPATH/bin/goveralls -coverprofile=overalls.coverprofile -service github.com/danielfireman/contratospublicos -repotoken $COVERALLS_TOKEN
+ - $GOPATH/bin/goveralls -coverprofile=overalls.coverprofile -service travis-ci -repotoken $COVERALLS_TOKEN
