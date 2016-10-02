@@ -52,9 +52,6 @@ func main() {
 	}
 
 	flag.Parse()
-	if *municipiosCsv == "" {
-		log.Fatalf("Por favor setar --municipios_csv_path")
-	}
 
 	nLinhas := 0
 	r := csv.NewReader(bufio.NewReader(os.Stdin))
