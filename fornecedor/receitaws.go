@@ -1,4 +1,4 @@
-package receitaws
+package fornecedor
 
 import (
 	"context"
@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"reflect"
+	"sync"
 	"time"
 
 	"github.com/danielfireman/contratospublicos/model"
@@ -46,63 +48,78 @@ const (
 	url     = "http://receitaws.com.br/v1/cnpj/"
 )
 
-var client = http.DefaultClient
+type coletorReceitaWS struct {
+	cliente *http.Client
+	pool    sync.Pool
+}
 
-func Fetch(ctx context.Context, id string) (interface{}, error) {
+func ColetorReceitaWs() ColetorDadosFornecedor {
+	return &coletorReceitaWS{
+		cliente: http.DefaultClient,
+		pool: sync.Pool{
+			New: func() interface{} {
+				return &DadosReceitaWS{}
+			},
+		},
+	}
+}
+
+func (c *coletorReceitaWS) ColetaDados(ctx context.Context, fornecedor *model.Fornecedor) error {
 	timeoutCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	req, err := http.NewRequest("GET", url+id, nil)
+	req, err := http.NewRequest("GET", url+fornecedor.ID, nil)
 	req.WithContext(timeoutCtx)
-	resp, err := client.Do(req)
+	resp, err := c.cliente.Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	// TODO(danielfireman): Usar sync.Pool
-	ret := &DadosReceitaWS{}
-	if err := json.Unmarshal(body, ret); err != nil {
-		return nil, err
-	}
-	if ret.Status != "OK" {
-		return nil, fmt.Errorf("Error calling receitaws: '%s'", ret.Message)
-	}
-	return ret, nil
-}
+	dr := c.pool.Get().(*DadosReceitaWS)
+	defer c.pool.Put(dr)
+	defer func(dr *DadosReceitaWS) {
+		p := reflect.ValueOf(dr).Elem()
+		p.Set(reflect.Zero(p.Type()))
+	}(dr)
 
-func AtualizaFornecedor(f *model.Fornecedor, i interface{}) {
-	dr := i.(*DadosReceitaWS)
-	f.DataSituacao = dr.DataSituacao
-	f.Tipo = dr.Tipo
-	f.Situacao = dr.Situacao
-	f.NomeReceita = dr.Nome
-	f.Telefone = dr.Telefone
-	f.Cnpj = dr.Cnpj
-	f.Municipio = dr.Municipio
-	f.UF = dr.UF
-	f.DataAbertura = dr.DataAbertura
-	f.NaturezaJuridica = dr.NaturezaJuridica
-	f.NomeFantasia = dr.NomeFantasia
-	f.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
-	f.Bairro = dr.Bairro
-	f.Logradouro = dr.Logradouro
-	f.Numero = dr.CEP
-	f.CEP = dr.CEP
+	if err := json.Unmarshal(body, dr); err != nil {
+		return err
+	}
+	if dr.Status != "OK" {
+		return fmt.Errorf("Error calling receitaws: '%s'", dr.Message)
+	}
+	fornecedor.DataSituacao = dr.DataSituacao
+	fornecedor.Tipo = dr.Tipo
+	fornecedor.Situacao = dr.Situacao
+	fornecedor.NomeReceita = dr.Nome
+	fornecedor.Telefone = dr.Telefone
+	fornecedor.Cnpj = dr.Cnpj
+	fornecedor.Municipio = dr.Municipio
+	fornecedor.UF = dr.UF
+	fornecedor.DataAbertura = dr.DataAbertura
+	fornecedor.NaturezaJuridica = dr.NaturezaJuridica
+	fornecedor.NomeFantasia = dr.NomeFantasia
+	fornecedor.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
+	fornecedor.Bairro = dr.Bairro
+	fornecedor.Logradouro = dr.Logradouro
+	fornecedor.Numero = dr.CEP
+	fornecedor.CEP = dr.CEP
 	for _, a := range dr.AtividadePrincipal {
-		f.AtividadesPrincipais = append(f.AtividadesPrincipais, &model.Atividade{
+		fornecedor.AtividadesPrincipais = append(fornecedor.AtividadesPrincipais, &model.Atividade{
 			Text: a.Text,
 			Code: a.Code,
 		})
 	}
 	for _, a := range dr.AtividadesSecundarias {
-		f.AtividadesSecundarias = append(f.AtividadesSecundarias, &model.Atividade{
+		fornecedor.AtividadesSecundarias = append(fornecedor.AtividadesSecundarias, &model.Atividade{
 			Text: a.Text,
 			Code: a.Code,
 		})
 	}
+	return nil
 }

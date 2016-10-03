@@ -12,7 +12,6 @@ import (
 
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/danielfireman/contratospublicos/model"
-	"github.com/danielfireman/contratospublicos/resumo"
 
 	"gopkg.in/mgo.v2"
 )
@@ -144,7 +143,7 @@ func main() {
 	for _, d := range dadosFornecedores {
 		fornecedores = append(fornecedores, d.fornecedor)
 		for l, r := range d.resumo {
-			resumo := &resumo.ResumoContratosDB{
+			resumo := &fornecedor.ResumoContratosDB{
 				ID:             d.fornecedor.ID,
 				ValorContratos: r.valor,
 				NumContratos:   r.num,

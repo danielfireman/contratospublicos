@@ -1,4 +1,4 @@
-package resumo
+package fornecedor
 
 import (
 	"bufio"
@@ -8,8 +8,9 @@ import (
 	"io"
 	"log"
 	"os"
+	"reflect"
+	"sync"
 
-	"github.com/danielfireman/contratospublicos/fetcher"
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/store"
 
@@ -17,7 +18,6 @@ import (
 )
 
 const (
-	db                  = "heroku_q6gnv76m"
 	dadosMunicipiosPath = "dados_municipios.csv"
 )
 
@@ -30,14 +30,19 @@ type ResumoContratosDB struct {
 	Partidos       []*model.Partido   `bson:"partidos,omitempty"`
 }
 
-var municipios = make(map[string]string)
+type coletorResumoContratos struct {
+	store      store.Store
+	pool       sync.Pool
+	municipios map[string]string
+}
 
-func init() {
+func ColetorResumoContratos(s store.Store) ColetorDadosFornecedor {
 	f, err := os.Open(dadosMunicipiosPath)
 	if err != nil {
-		log.Fatal("Erro ao carregar arquivo de municípios: %q", err)
+		log.Fatalf("Erro ao carregar arquivo de municípios: %q", err)
 	}
 	r := csv.NewReader(bufio.NewReader(f))
+	municipios := make(map[string]string)
 	for {
 		l, err := r.Read()
 		if err == io.EOF {
@@ -46,39 +51,38 @@ func init() {
 		municipios[l[0]] = l[1]
 	}
 	fmt.Println("Municípios carregados com sucesso.")
-}
-
-type resumo struct {
-	store       store.Store
-	legislatura string
-}
-
-func Fetcher(s store.Store, legislatura string) fetcher.Fetcher {
-	return &resumo{s, legislatura}
-}
-
-func (r *resumo) Fetch(ctx context.Context, id string) (interface{}, error) {
-	// TODO(danielfireman): Usar um sync.Pool
-	ret := &ResumoContratosDB{}
-	if err := r.store.FindByID(db, r.legislatura, id, ret); err != nil {
-		return nil, err
+	return &coletorResumoContratos{
+		store: s,
+		pool: sync.Pool{
+			New: func() interface{} {
+				return &ResumoContratosDB{}
+			},
+		},
+		municipios: municipios,
 	}
-	// Adicionando nomes aos municipios.
-	for _, m := range ret.Municipios {
-		nome, ok := municipios[m.Cod]
+}
+
+func (r *coletorResumoContratos) ColetaDados(ctx context.Context, fornecedor *model.Fornecedor) error {
+	rDB := r.pool.Get().(*ResumoContratosDB)
+	defer r.pool.Put(rDB)
+	defer func(rDB *ResumoContratosDB) {
+		p := reflect.ValueOf(rDB).Elem()
+		p.Set(reflect.Zero(p.Type()))
+	}(rDB)
+	if err := r.store.FindByID(fornecedor.Legislatura, fornecedor.ID, rDB); err != nil {
+		return err
+	}
+	for _, m := range rDB.Municipios {
+		nome, ok := r.municipios[m.Cod]
 		if ok {
 			m.Nome = nome
 		}
 	}
-	return ret, nil
-}
-
-func AtualizaFornecedor(f *model.Fornecedor, i interface{}) {
-	rDB := i.(*ResumoContratosDB)
-	f.ResumoContratos = &model.ResumoContratosFornecedor{
+	fornecedor.ResumoContratos = &model.ResumoContratosFornecedor{
 		ValorContratos: rDB.ValorContratos,
 		NumContratos:   rDB.NumContratos,
 		Municipios:     rDB.Municipios,
 		Partidos:       rDB.Partidos,
 	}
+	return nil
 }

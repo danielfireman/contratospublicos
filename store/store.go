@@ -1,5 +1,9 @@
 package store
 
 type Store interface {
-	FindByID(db, c string, id string, ret interface{}) error
+	FindByID(c string, id string, ret interface{}) error
+}
+
+type NaoEncontradoErr struct {
+	error
 }

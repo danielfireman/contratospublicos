@@ -5,25 +5,24 @@ import (
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-
-	"github.com/danielfireman/contratospublicos/fetcher"
 )
 
 type mongoDBStore struct {
 	session *mgo.Session
+	db      string
 }
 
-func (s *mongoDBStore) FindByID(db, c string, id string, ret interface{}) error {
+func (s *mongoDBStore) FindByID(c string, id string, ret interface{}) error {
 	session := s.session.Copy()
 	defer session.Close()
-	err := session.DB(db).C(c).Find(bson.M{"id": id}).One(ret)
+	err := session.DB(s.db).C(c).Find(bson.M{"id": id}).One(ret)
 	if err == mgo.ErrNotFound {
-		return fetcher.NotFound(err)
+		return NaoEncontradoErr{err}
 	}
 	return err
 }
 
-func MongoDB(uri string) (Store, error) {
+func MongoDB(uri, db string) (Store, error) {
 	if uri == "" {
 		return nil, fmt.Errorf("MongoDB URI inválida.")
 	}
@@ -31,5 +30,5 @@ func MongoDB(uri string) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &mongoDBStore{s}, nil
+	return &mongoDBStore{s, db}, nil
 }
