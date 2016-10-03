@@ -2,13 +2,13 @@ package fornecedor
 
 import (
 	"context"
+	"reflect"
+	"sync"
 
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/store"
 
 	"gopkg.in/mgo.v2/bson"
-	"reflect"
-	"sync"
 )
 
 const (
