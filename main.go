@@ -40,7 +40,6 @@ func main() {
 	agent.NewrelicName = "contratospublicos"
 	agent.CollectHTTPStat = true
 	agent.CollectHTTPStatuses = true
-	agent.HTTPStatusCounters = true
 	agent.CollectMemoryStat = true
 	if err := agent.Run(); err != nil {
 		log.Fatal(err)
