@@ -28,14 +28,14 @@
         <h1>Contratos Públicos.Info</h1>
         <p>Informações sobre o relacionamento das empresas com o seu estado
         <p><a href="http://github.com/danielfireman/contratospublicos" target="_blank" class="icon fa-github alt"><span
-                    class="label">GitHub</span></a>
+                class="label">GitHub</span></a>
             <!--built by <a href="https://twitter.com/daniellfireman">@daniellfireman</a>-->
     </header>
 
     <!-- Nav -->
     <nav id="nav">
         <ul>
-            <li><a href="#intro" class="active">Introdução</a></li>
+            <!-- <li><a href="#intro" class="active">Introdução</a></li>-->
             <li><a href="#comousar">Como usar</a></li>
             <!-- <li><a href="#infra">Infra</a></li>
             <li><a href="#cta">Comunidade</a></li>-->
@@ -46,6 +46,7 @@
     <div id="main">
 
         <!-- Introdução -->
+        <!--
         <section id="intro" class="main">
             <div class="spotlight">
                 <div class="content">
@@ -55,14 +56,14 @@
                     <p>Sed lorem ipsum dolor sit amet nullam consequat feugiat consequat magna
                         adipiscing magna etiam amet veroeros. Lorem ipsum dolor tempus sit cursus.
                         Tempus nisl et nullam lorem ipsum dolor sit amet aliquam.</p>
-                    <!--<ul class="actions">
+                    <ul class="actions">
                         <li><a href="generic.html" class="button">Learn More</a></li>
-                    </ul>-->
+                    </ul>
                 </div>
-                <!--<span class="image"><img src="images/pic01.jpg" alt="" /></span>-->
+                <span class="image"><img src="images/pic01.jpg" alt="" /></span>
             </div>
         </section>
-
+        -->
         <!-- Como usar -->
         <section id="comousar" class="main">
             <div class="spotlight">
@@ -70,12 +71,19 @@
                     <header class="major">
                         <h2>Como Usar</h2>
                     </header>
-                    <p>Sed lorem ipsum dolor sit amet nullam consequat feugiat consequat magna
-                        adipiscing magna etiam amet veroeros. Lorem ipsum dolor tempus sit cursus.
-                        Tempus nisl et nullam lorem ipsum dolor sit amet aliquam.</p>
-                    <!--<ul class="actions">
-                        <li><a href="generic.html" class="button">Learn More</a></li>
-                    </ul>-->
+                    <p></p><b>URL</b>: https://contratospublicos.info/api/v1/fornecedor/{CNPJ}<br>
+                    Onde {CNPJ} deve ser substituído pelo CNPJ do fornecedor a ser pesquisado.
+                    <p></p><b>Parâmetros de Consulta</b>
+                    <ul>
+                        legislatura: ano inicial da legislatura a ser pesquisada. Número {2008|2012}. Padrão 2012.
+                    </ul>
+                    <b>Exemplos:</b></br>
+                        <code>$ curl -X GET https://contratospublicos.info/api/v1/fornecedor/09095183000140</code></br>
+                        <code>$ curl -X GET
+                            https://contratospublicos.info/api/v1/fornecedor/09095183000140?legislatura=2008</code>
+                        <!--<ul class="actions">
+                            <li><a href="generic.html" class="button">Learn More</a></li>
+                        </ul>-->
                 </div>
                 <!--<span class="image"><img src="images/pic01.jpg" alt="" /></span>-->
             </div>
