@@ -3,46 +3,22 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "0aax/qOmVxrexQc7w9+P99GH7zs=",
-			"path": "github.com/julienschmidt/httprouter",
-			"revision": "21439ef4d70ba4f3e2a5ed9249e7b03af4019b40",
-			"revisionTime": "2016-01-06T08:35:25Z"
+			"checksumSHA1": "98cxq/KgsAaV6kLOwu3RLihsqg4=",
+			"path": "github.com/labstack/echo",
+			"revision": "9c0e9d689f87624ad01748b1a963d356afbfdceb",
+			"revisionTime": "2016-09-27T06:20:17Z"
 		},
 		{
-			"checksumSHA1": "sPK/lNo0SgZ6TjYG3VlQcHHe2sE=",
-			"path": "github.com/newrelic/go-agent",
-			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
-			"revisionTime": "2016-09-07T20:43:26Z"
+			"checksumSHA1": "ag5fKA9XYSXX34ysbQrO9OUF6qM=",
+			"path": "github.com/labstack/echo/engine",
+			"revision": "9c0e9d689f87624ad01748b1a963d356afbfdceb",
+			"revisionTime": "2016-09-27T06:20:17Z"
 		},
 		{
-			"checksumSHA1": "ccPaI/mAd7tT33Dk1LAOdG2KU7I=",
-			"path": "github.com/newrelic/go-agent/internal",
-			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
-			"revisionTime": "2016-09-07T20:43:26Z"
-		},
-		{
-			"checksumSHA1": "mkbupMdy+cF7xyo8xW0A6Bq15k4=",
-			"path": "github.com/newrelic/go-agent/internal/jsonx",
-			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
-			"revisionTime": "2016-09-07T20:43:26Z"
-		},
-		{
-			"checksumSHA1": "ywxlVKtGArJ2vDfH1rAqEFwSGds=",
-			"path": "github.com/newrelic/go-agent/internal/logger",
-			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
-			"revisionTime": "2016-09-07T20:43:26Z"
-		},
-		{
-			"checksumSHA1": "joSrZEftQjYC8nSxaqClUkQEOEY=",
-			"path": "github.com/newrelic/go-agent/internal/sysinfo",
-			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
-			"revisionTime": "2016-09-07T20:43:26Z"
-		},
-		{
-			"checksumSHA1": "c2JSKesj3tHYgzIF3QL37WfHWG8=",
-			"path": "github.com/newrelic/go-agent/internal/utilization",
-			"revision": "a923caa59930cbb1b27d2a9fb2d5663d9e5c637c",
-			"revisionTime": "2016-09-07T20:43:26Z"
+			"checksumSHA1": "BWX341TJuWKNN6PrfwDQS8hNgw4=",
+			"path": "github.com/labstack/echo/engine/fasthttp",
+			"revision": "9c0e9d689f87624ad01748b1a963d356afbfdceb",
+			"revisionTime": "2016-09-27T06:20:17Z"
 		},
 		{
 			"checksumSHA1": "1whKo2sIMemLR6Ked08dE/+sRc8=",
@@ -55,6 +31,12 @@
 			"path": "github.com/stretchr/testify/mock",
 			"revision": "2b15294402a895a4224659d181866f545991021e",
 			"revisionTime": "2015-09-29T18:35:40Z"
+		},
+		{
+			"checksumSHA1": "vn6GauRb5+/heftlNb5OLybL1S0=",
+			"path": "github.com/yvasiyarov/gorelic",
+			"revision": "ae09aa139a2b7f638e2412baceaceebd41eff115",
+			"revisionTime": "2016-06-16T10:50:35Z"
 		},
 		{
 			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",

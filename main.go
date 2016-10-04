@@ -1,19 +1,19 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"sync"
+	"context"
 
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/store"
-	"github.com/julienschmidt/httprouter"
-	"github.com/newrelic/go-agent"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/engine/fasthttp"
+	"github.com/yvasiyarov/gorelic"
+	"time"
 )
 
 const (
@@ -35,26 +35,31 @@ func main() {
 	if nrLicence == "" {
 		log.Fatal("$NEW_RELIC_LICENSE_KEY must be set")
 	}
-	config := newrelic.NewConfig("ciframe-api", nrLicence)
-	newRelicApp, err := newrelic.NewApplication(config)
-	if err != nil {
+	agent := gorelic.NewAgent()
+	agent.Verbose = true
+	agent.NewrelicLicense = nrLicence
+	agent.NewrelicName = "contratospublicos"
+	agent.CollectHTTPStat = true
+	agent.CollectMemoryStat = true
+	agent.Run()
+	if err != agent.Run() {
 		log.Fatal(err)
 	}
 	log.Println("Monitoramento NewRelic configurado com sucesso.")
 
+	// Configuração do roteador echo.
+	e := echo.New()
+	e.Static("/", "public/index.html")
+	e.Static("/", "public")
+
 	coletorBDPrincipal := fornecedor.ColetorBD(mongoDBStore)
 	coletorReceitaWS := fornecedor.ColetorReceitaWs()
 	coletorResumoContratos := fornecedor.ColetorResumoContratos(mongoDBStore)
-
-	router := httprouter.New()
-	router.GET("/api/v1/fornecedor/:id", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		txn := newRelicApp.StartTransaction("fornecedor", w, r)
-		defer txn.End()
-
+	e.GET("/api/v1/fornecedor/:id", func(c echo.Context) error {
 		ctx := context.Background()
-		id := p.ByName("id")
+		id := c.Param("id")
 
-		legislatura := r.URL.Query().Get("legislatura")
+		legislatura := c.QueryParam("legislatura")
 		if legislatura == "" {
 			legislatura = "2012"
 		}
@@ -65,51 +70,38 @@ func main() {
 
 		// Usando nosso BD como fonte autoritativa para buscas. Se não existe lá, nós
 		// não conhecemos. Por isso, essa chamada é síncrona.
-		fSeg := newrelic.StartSegment(txn, "fornecedores_collection_query")
+		tF := agent.Tracer.BeginTrace("fornecedores_collection_query")
 		if err := coletorBDPrincipal.ColetaDados(ctx, resultado); err != nil {
 			if fornecedor.NaoEncontrado(err) {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				log.Println("Err id:'%s' err:'%q'", id, err)
-				w.WriteHeader(http.StatusInternalServerError)
+				tF.EndTrace()
+				return c.NoContent(http.StatusNotFound)
 			}
-			fSeg.End()
-			return
+			log.Println("Err id:'%s' err:'%q'", id, err)
+			tF.EndTrace()
+			return c.NoContent(http.StatusInternalServerError)
 		}
-		fSeg.End()
 
 		// Pegando dados remotos de forma concorrente.
 		wg := sync.WaitGroup{}
 		wg.Add(1)
 		go func(res *model.Fornecedor) {
 			defer wg.Done()
-			defer newrelic.StartSegment(txn, "receitaws_query").End()
+			agent.Tracer.Trace("receitaws_query", func() {
 			if coletorReceitaWS.ColetaDados(ctx, res); err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
-				return
-			}
+			}})
 		}(resultado)
 		wg.Add(1)
 		go func(res *model.Fornecedor) {
 			defer wg.Done()
-			defer newrelic.StartSegment(txn, legislatura+"_collection_query").End()
+			agent.Tracer.Trace(legislatura + "_collection_query", func() {
 			if err := coletorResumoContratos.ColetaDados(ctx, res); err != nil {
 				log.Println("Err id:'%s' err:'%q'", id, err)
-				return
-			}
+			}})
 		}(resultado)
 		wg.Wait()
-
-		marshallSeg := newrelic.StartSegment(txn, "marshall_results")
-		b, err := json.Marshal(resultado)
-		marshallSeg.End()
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.Header().Add("Access-Control-Allow-Origin", "*")
-		fmt.Fprintf(w, string(b))
+		return c.JSON(http.StatusOK, resultado)
 	})
 	log.Println("Serviço inicializado na porta ", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(e.Run(fasthttp.New(":" + port)))
 }
