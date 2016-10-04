@@ -65,12 +65,6 @@
 			"versionExact": "2.1"
 		},
 		{
-			"path": "github.com/labstack/echo/fasthttp",
-			"revision": "2.1",
-			"version": "2.1",
-			"versionExact": "2.1"
-		},
-		{
 			"checksumSHA1": "iDCjk9XfJyeiobpsw3E1UXXde/0=",
 			"path": "github.com/labstack/echo/log",
 			"revision": "04e6901d05b58ddbae579a6252a3d1bb3f334adc",
