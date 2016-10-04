@@ -217,11 +217,8 @@ func (u *URI) Parse(host, uri []byte) {
 	u.parse(host, uri, nil)
 }
 
-func (u *URI) parseQuick(uri []byte, h *RequestHeader, isTLS bool) {
+func (u *URI) parseQuick(uri []byte, h *RequestHeader) {
 	u.parse(nil, uri, h)
-	if isTLS {
-		u.scheme = append(u.scheme[:0], strHTTPS...)
-	}
 }
 
 func (u *URI) parse(host, uri []byte, h *RequestHeader) {
@@ -395,27 +392,18 @@ func (u *URI) updateBytes(newURI, buf []byte) []byte {
 	if len(newURI) == 0 {
 		return buf
 	}
-
-	n := bytes.Index(newURI, strSlashSlash)
-	if n >= 0 {
-		// absolute uri
-		var b [32]byte
-		schemeOriginal := b[:0]
-		if len(u.scheme) > 0 {
-			schemeOriginal = append([]byte(nil), u.scheme...)
-		}
-		u.Parse(nil, newURI)
-		if len(schemeOriginal) > 0 && len(u.scheme) == 0 {
-			u.scheme = append(u.scheme[:0], schemeOriginal...)
-		}
-		return buf
-	}
-
 	if newURI[0] == '/' {
 		// uri without host
 		buf = u.appendSchemeHost(buf[:0])
 		buf = append(buf, newURI...)
 		u.Parse(nil, buf)
+		return buf
+	}
+
+	n := bytes.Index(newURI, strColonSlashSlash)
+	if n >= 0 {
+		// absolute uri
+		u.Parse(nil, newURI)
 		return buf
 	}
 
@@ -476,7 +464,7 @@ func (u *URI) String() string {
 }
 
 func splitHostURI(host, uri []byte) ([]byte, []byte, []byte) {
-	n := bytes.Index(uri, strSlashSlash)
+	n := bytes.Index(uri, strColonSlashSlash)
 	if n < 0 {
 		return strHTTP, host, uri
 	}
@@ -484,10 +472,7 @@ func splitHostURI(host, uri []byte) ([]byte, []byte, []byte) {
 	if bytes.IndexByte(scheme, '/') >= 0 {
 		return strHTTP, host, uri
 	}
-	if len(scheme) > 0 && scheme[len(scheme)-1] == ':' {
-		scheme = scheme[:len(scheme)-1]
-	}
-	n += len(strSlashSlash)
+	n += len(strColonSlashSlash)
 	uri = uri[n:]
 	n = bytes.IndexByte(uri, '/')
 	if n < 0 {
