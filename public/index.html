@@ -72,25 +72,20 @@
                     <header class="major">
                         <h2>Como Usar</h2>
                     </header>
-                    <p><b>URL: </b><a href="https://contratospublicos.info/api/v1/fornecedor/CNPJ" target="_blank">https://contratospublicos.info/api/v1/fornecedor/{CNPJ}</a><br>
-                    Onde {CNPJ} deve ser substituído pelo CNPJ do fornecedor a ser pesquisado.
-
+                    <p><b>URL: </b><code>GET</code> <a href="https://contratospublicos.info/api/v1/fornecedor" target="_blank">https://contratospublicos.info/api/v1/fornecedor</a><br>
                     <p><b>Parâmetros de Consulta</b>
                     <ul>
-                        legislatura: ano inicial da legislatura a ser pesquisada. Número {2008|2012}. Padrão 2012.
+                        <li><b>cnpj:</b> [string, obrigatório] CNPJ do fornecedor a ser pesquisado.
+                        <li><b>legislatura:</b> [número, opcional] ano inicial da legislatura a ser pesquisada. Valores {2008|2012}. Valor padrão 2012.
                     </ul>
                     </p>
-
-                    <p><b>Exemplos:</b></br>
-                        <code>$ curl -X GET https://contratospublicos.info/api/v1/fornecedor/09095183000140</code></br>
-                        <code>$ curl -X GET
-                            https://contratospublicos.info/api/v1/fornecedor/09095183000140?legislatura=2008</code>
-                        <!--<ul class="actions">
-                            <li><a href="generic.html" class="button">Learn More</a></li>
-                        </ul>-->
+                    <p><b>Exemplos:</b><br>
+                    <ul>
+                        <li><a href="https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40" target="_blank">https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40</a></li>
+                        <li><a href="https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40&legislatura=2008" target="_blank">https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40&legislatura=2008</a></li>
+                    </ul>
                     </p>
                 </div>
-                <!--<span class="image"><img src="images/pic01.jpg" alt="" /></span>-->
             </div>
         </section>
         <section id="sugestoes" class="main">

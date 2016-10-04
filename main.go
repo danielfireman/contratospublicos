@@ -42,6 +42,7 @@ func main() {
 	agent.CollectHTTPStat = true
 	agent.CollectHTTPStatuses = true
 	agent.CollectMemoryStat = true
+	agent.NewrelicPollInterval = 120
 	if err := agent.Run(); err != nil {
 		log.Fatal(err)
 	}
@@ -55,20 +56,25 @@ func main() {
 	coletorBDPrincipal := fornecedor.ColetorBD(mongoDBStore)
 	coletorReceitaWS := fornecedor.ColetorReceitaWs()
 	coletorResumoContratos := fornecedor.ColetorResumoContratos(mongoDBStore)
-	e.GET("/api/v1/fornecedor/:id", func(c echo.Context) error {
+	e.GET("/api/v1/fornecedor", func(c echo.Context) error {
 		ctx := context.Background()
-		id := c.Param("id")
+
+		// NOTA: Utilizando parametros de consulta para permitir que usuários copiem e colem CNPJs
+		// completos.
+		id := c.QueryParam("cnpj")
 
 		// "CNPJ" é um link que tem no site.
-		if id == "" || id == "CNPJ" {
+		if id == "" {
 			return c.String(http.StatusBadRequest, "CNPJ do fornecedor obrigatório.")
 		}
 
 		// Removendo caracteres especiais que existem no CPF e CNPJ.
-		// Isso permite que os usuários copiem e colem CPFs e CNPJs de sites na internet e outras fontes.
+		// Isso permite que os usuários copiem e colem CPFs e CNPJs de sites na internet e outras
+		// fontes.
 		id = strings.Replace(id, ".", "", -1)
 		id = strings.Replace(id, "-", "", -1)
 		id = strings.Replace(id, "/", "", -1)
+		log.Printf("id: %s\n", id)
 
 		legislatura := c.QueryParam("legislatura")
 		if legislatura == "" {
@@ -81,14 +87,11 @@ func main() {
 
 		// Usando nosso BD como fonte autoritativa para buscas. Se não existe lá, nós
 		// não conhecemos. Por isso, essa chamada é síncrona.
-		tF := agent.Tracer.BeginTrace("fornecedores_collection_query")
 		if err := coletorBDPrincipal.ColetaDados(ctx, resultado); err != nil {
 			if fornecedor.NaoEncontrado(err) {
-				tF.EndTrace()
 				return c.NoContent(http.StatusNotFound)
 			}
 			log.Println("Err id:'%s' err:'%q'", id, err)
-			tF.EndTrace()
 			return c.NoContent(http.StatusInternalServerError)
 		}
 
@@ -97,20 +100,20 @@ func main() {
 		wg.Add(1)
 		go func(res *model.Fornecedor) {
 			defer wg.Done()
-			agent.Tracer.Trace("receitaws_query", func() {
-				if coletorReceitaWS.ColetaDados(ctx, res); err != nil {
-					log.Println("Err id:'%s' err:'%q'", id, err)
-				}
-			})
+
+			if coletorReceitaWS.ColetaDados(ctx, res); err != nil {
+				log.Println("Err id:'%s' err:'%q'", id, err)
+			}
+
 		}(resultado)
 		wg.Add(1)
 		go func(res *model.Fornecedor) {
 			defer wg.Done()
-			agent.Tracer.Trace(legislatura+"_collection_query", func() {
-				if err := coletorResumoContratos.ColetaDados(ctx, res); err != nil {
-					log.Println("Err id:'%s' err:'%q'", id, err)
-				}
-			})
+
+			if err := coletorResumoContratos.ColetaDados(ctx, res); err != nil {
+				log.Println("Err id:'%s' err:'%q'", id, err)
+			}
+
 		}(resultado)
 		wg.Wait()
 		return c.JSON(http.StatusOK, resultado)
