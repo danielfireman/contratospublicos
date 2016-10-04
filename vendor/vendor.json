@@ -27,6 +27,18 @@
 			"revisionTime": "2016-09-27T06:20:17Z"
 		},
 		{
+			"checksumSHA1": "iDCjk9XfJyeiobpsw3E1UXXde/0=",
+			"path": "github.com/labstack/echo/log",
+			"revision": "9c0e9d689f87624ad01748b1a963d356afbfdceb",
+			"revisionTime": "2016-09-27T06:20:17Z"
+		},
+		{
+			"checksumSHA1": "HqO+MEV0RqgX+Hge8P8YB2wldgo=",
+			"path": "github.com/labstack/gommon/log",
+			"revision": "f3b1a1b3bd4726161e1200863d278df7da5e66ff",
+			"revisionTime": "2016-09-25T18:11:33Z"
+		},
+		{
 			"checksumSHA1": "1whKo2sIMemLR6Ked08dE/+sRc8=",
 			"path": "github.com/stretchr/testify/assert",
 			"revision": "2b15294402a895a4224659d181866f545991021e",
@@ -39,10 +51,34 @@
 			"revisionTime": "2015-09-29T18:35:40Z"
 		},
 		{
+			"checksumSHA1": "caMkkdFBKE34gZxf2oqkIwHImDg=",
+			"path": "github.com/valyala/fasthttp",
+			"revision": "b43280dfe8ade44056e0179593f8ab30f82a7f47",
+			"revisionTime": "2016-09-27T17:02:30Z"
+		},
+		{
+			"checksumSHA1": "suL7yZNBxN847Lmrt2bMIIwtJ4g=",
+			"path": "github.com/yvasiyarov/go-metrics",
+			"revision": "c25f46c4b94079672242ec48a545e7ca9ebe3aec",
+			"revisionTime": "2015-01-12T13:29:44Z"
+		},
+		{
 			"checksumSHA1": "vn6GauRb5+/heftlNb5OLybL1S0=",
 			"path": "github.com/yvasiyarov/gorelic",
 			"revision": "ae09aa139a2b7f638e2412baceaceebd41eff115",
 			"revisionTime": "2016-06-16T10:50:35Z"
+		},
+		{
+			"checksumSHA1": "/9VouHqPf0ad+TcMGqhPssfoLb0=",
+			"path": "github.com/yvasiyarov/newrelic_platform_go",
+			"revision": "9c099fbc30e90de5bb5c5f94aa5fd08f2daeaacd",
+			"revisionTime": "2016-06-01T14:19:57Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "golang.org/x/net/context",
+			"revision": "ffe101cce3477a6c6d8f0754d103bb0a84ec1266",
+			"revisionTime": "2016-10-03T09:22:05Z"
 		},
 		{
 			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
