@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 	"sync"
-	"context"
 
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/danielfireman/contratospublicos/model"
@@ -13,7 +13,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	"github.com/yvasiyarov/gorelic"
-	"time"
 )
 
 const (
@@ -87,17 +86,19 @@ func main() {
 		go func(res *model.Fornecedor) {
 			defer wg.Done()
 			agent.Tracer.Trace("receitaws_query", func() {
-			if coletorReceitaWS.ColetaDados(ctx, res); err != nil {
-				log.Println("Err id:'%s' err:'%q'", id, err)
-			}})
+				if coletorReceitaWS.ColetaDados(ctx, res); err != nil {
+					log.Println("Err id:'%s' err:'%q'", id, err)
+				}
+			})
 		}(resultado)
 		wg.Add(1)
 		go func(res *model.Fornecedor) {
 			defer wg.Done()
-			agent.Tracer.Trace(legislatura + "_collection_query", func() {
-			if err := coletorResumoContratos.ColetaDados(ctx, res); err != nil {
-				log.Println("Err id:'%s' err:'%q'", id, err)
-			}})
+			agent.Tracer.Trace(legislatura+"_collection_query", func() {
+				if err := coletorResumoContratos.ColetaDados(ctx, res); err != nil {
+					log.Println("Err id:'%s' err:'%q'", id, err)
+				}
+			})
 		}(resultado)
 		wg.Wait()
 		return c.JSON(http.StatusOK, resultado)
