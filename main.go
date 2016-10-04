@@ -57,6 +57,10 @@ func main() {
 		ctx := context.Background()
 		id := c.Param("id")
 
+		if id == "" || id == "CNPJ" {
+			return c.String(http.StatusBadRequest, "CNPJ do fornecedor obrigatório.")
+		}
+
 		legislatura := c.QueryParam("legislatura")
 		if legislatura == "" {
 			legislatura = "2012"

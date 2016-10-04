@@ -37,6 +37,7 @@
         <ul>
             <!-- <li><a href="#intro" class="active">Introdução</a></li>-->
             <li><a href="#comousar">Como usar</a></li>
+            <li><a href="#sugestoes">Sugestões e Problemas</a></li>
             <!-- <li><a href="#infra">Infra</a></li>
             <li><a href="#cta">Comunidade</a></li>-->
         </ul>
@@ -71,24 +72,38 @@
                     <header class="major">
                         <h2>Como Usar</h2>
                     </header>
-                    <p></p><b>URL</b>: https://contratospublicos.info/api/v1/fornecedor/{CNPJ}<br>
+                    <p><b>URL: </b><a href="https://contratospublicos.info/api/v1/fornecedor/{CNPJ}" target="_blank">https://contratospublicos.info/api/v1/fornecedor/{CNPJ}</a><br>
                     Onde {CNPJ} deve ser substituído pelo CNPJ do fornecedor a ser pesquisado.
-                    <p></p><b>Parâmetros de Consulta</b>
+
+                    <p><b>Parâmetros de Consulta</b>
                     <ul>
                         legislatura: ano inicial da legislatura a ser pesquisada. Número {2008|2012}. Padrão 2012.
                     </ul>
-                    <b>Exemplos:</b></br>
+                    </p>
+
+                    <p><b>Exemplos:</b></br>
                         <code>$ curl -X GET https://contratospublicos.info/api/v1/fornecedor/09095183000140</code></br>
                         <code>$ curl -X GET
                             https://contratospublicos.info/api/v1/fornecedor/09095183000140?legislatura=2008</code>
                         <!--<ul class="actions">
                             <li><a href="generic.html" class="button">Learn More</a></li>
                         </ul>-->
+                    </p>
                 </div>
                 <!--<span class="image"><img src="images/pic01.jpg" alt="" /></span>-->
             </div>
         </section>
-
+        <section id="sugestoes" class="main">
+            <div class="spotlight">
+                <div class="content">
+                    <header class="major">
+                        <h2>Sugestões e Problemas</h2>
+                    </header>
+                    Favor entrar em contato via <a class="action" href="https://github.com/danielfireman/contratospublicos/issues/new" target="_blank">issues do Github</a>
+                </div>
+                <!--<span class="image"><img src="images/pic01.jpg" alt="" /></span>-->
+            </div>
+        </section>
         <!-- Comunidade -->
         <!--
         <section id="infra" class="main">
