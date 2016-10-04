@@ -40,8 +40,7 @@ func main() {
 	agent.NewrelicName = "contratospublicos"
 	agent.CollectHTTPStat = true
 	agent.CollectMemoryStat = true
-	agent.Run()
-	if err != agent.Run() {
+	if err := agent.Run(); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Monitoramento NewRelic configurado com sucesso.")
