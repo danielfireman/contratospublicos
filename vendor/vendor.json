@@ -9,6 +9,12 @@
 			"revisionTime": "2016-09-27T06:20:17Z"
 		},
 		{
+			"checksumSHA1": "arbpSvi1eBUSuSaEZap+osiG+P8=",
+			"path": "github.com/labstack/echo/context",
+			"revision": "9c0e9d689f87624ad01748b1a963d356afbfdceb",
+			"revisionTime": "2016-09-27T06:20:17Z"
+		},
+		{
 			"checksumSHA1": "ag5fKA9XYSXX34ysbQrO9OUF6qM=",
 			"path": "github.com/labstack/echo/engine",
 			"revision": "9c0e9d689f87624ad01748b1a963d356afbfdceb",
