@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	"github.com/yvasiyarov/gorelic"
+	"strings"
 )
 
 const (
@@ -58,9 +59,16 @@ func main() {
 		ctx := context.Background()
 		id := c.Param("id")
 
+		// "CNPJ" é um link que tem no site.
 		if id == "" || id == "CNPJ" {
 			return c.String(http.StatusBadRequest, "CNPJ do fornecedor obrigatório.")
 		}
+
+		// Removendo caracteres especiais que existem no CPF e CNPJ.
+		// Isso permite que os usuários copiem e colem CPFs e CNPJs de sites na internet e outras fontes.
+		id = strings.Replace(id, ".", "", -1)
+		id = strings.Replace(id, "-", "", -1)
+		id = strings.Replace(id, "/", "", -1)
 
 		legislatura := c.QueryParam("legislatura")
 		if legislatura == "" {
