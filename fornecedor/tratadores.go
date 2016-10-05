@@ -38,7 +38,7 @@ func Tratadores() (*T, error) {
 			},
 		},
 		ac: accounting.Accounting{
-			Symbol:    "R$",
+			Symbol:    "",
 			Precision: 2,
 			Format:    "%s %v",
 			Decimal:   ",",

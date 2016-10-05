@@ -34,7 +34,6 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("Monitoramento NewRelic configurado com sucesso.")
-	
 
 	// Configuração do roteador echo.
 	e := echo.New()
