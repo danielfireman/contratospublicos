@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 
+	"net/http"
+
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/danielfireman/contratospublicos/templates"
 	"github.com/labstack/echo"
@@ -40,6 +42,9 @@ func main() {
 	e.Static("/", "public/index.html")
 	e.Static("/", "public")
 	e.SetRenderer(templates.T)
+	e.GET("/repo", func(c echo.Context) error {
+		return c.Redirect(http.StatusMovedPermanently, "http://github.com/danielfireman/contratospublicos")
+	})
 
 	// Lida com fornecedores
 	fTratadores, err := fornecedor.Tratadores()
