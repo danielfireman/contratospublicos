@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
     <!--[if lte IE 8]>
     <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+    <link rel="stylesheet" href="assets/css/main.css"/>
 </head>
 <body>
 
@@ -36,7 +37,8 @@
     <nav id="nav">
         <ul>
             <!-- <li><a href="#intro" class="active">Introdução</a></li>-->
-            <li><a href="#comousar">Como usar</a></li>
+            <li><a href="#busca">Busca</a></li>
+            <li><a href="#api">API</a></li>
             <li><a href="#sugestoes">Sugestões e Problemas</a></li>
             <!-- <li><a href="#infra">Infra</a></li>
             <li><a href="#cta">Comunidade</a></li>-->
@@ -65,12 +67,27 @@
             </div>
         </section>
         -->
-        <!-- Como usar -->
-        <section id="comousar" class="main">
+        <section id="busca" class="main">
             <div class="spotlight">
                 <div class="content">
                     <header class="major">
-                        <h2>Como Usar</h2>
+                        <h2>Busca</h2>
+                    </header>
+                    <div class="search">
+                        <form method="GET" action="fornecedor">
+                            <span class="fa fa-search" title="Digite o CNPJ do fornecedor e pressione enter para realizar a busca."></span>
+                            <input placeholder="CNPJ do Fornecedor" name="cnpj">
+                        </form>
+                    </div>
+                    <p>Digite o CNPJ do fornecedor e pressione enter para realizar a busca.</p>
+                </div>
+            </div>
+        </section>
+        <section id="api" class="main">
+            <div class="spotlight">
+                <div class="content">
+                    <header class="major">
+                        <h2>API</h2>
                     </header>
                     <p><b>URL: </b><code>GET</code> <a href="https://contratospublicos.info/api/v1/fornecedor" target="_blank">https://contratospublicos.info/api/v1/fornecedor</a><br>
                     <p><b>Parâmetros de Consulta</b>

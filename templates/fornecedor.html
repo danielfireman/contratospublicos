@@ -1,0 +1,170 @@
+{{define "fornecedor"}}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>{{.Nome}}</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!--[if lte IE 8]>
+    <script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="assets/css/main.css"/>
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+    <link href="http://mottie.github.io/tablesorter/css/theme.default.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- Wrapper -->
+<div id="wrapper">
+    <!-- Header -->
+    <header id="header">
+        <h1>{{.Nome}}</h1>
+        <p><b>{{.Cnpj}} {{if .Tipo}} &bull; {{.Tipo}}{{end}} &bull; {{.Legislatura}}</b></p>
+    </header>
+
+    <!-- Main -->
+    <div id="main">
+        <span style="padding-left:1em">{{if .UltimaAtualizacao}}Última atualização: {{.UltimaAtualizacao}} dias atrás{{end}}</span>
+        <span style="padding-left:0.5em">{{if .EstaAtiva}}<i class="fa fa-check-circle-o" aria-hidden="true"
+                                                             title="Situação: Ativa"></i>{{end}}</span>
+        <!-- Content -->
+        <section id="content" class="main">
+            <dl class="alt">
+                {{if .NomeFantasia}}
+                <b>Nome Fantasia: </b>{{.NomeFantasia}}<br>
+                {{end}}
+
+                {{if .DataAbertura}}
+                <b>Abertura:</b>{{.DataAbertura}}<br>
+                {{end}}
+
+                {{if .EnderecoParte1}}
+                <b>Endereço:</b>{{.EnderecoParte1}} &bull; {{.EnderecoParte2}}<br>
+                {{end}}
+
+                {{if .Telefone}}
+                <b>Fone:</b>{{.Telefone}}<br>
+                {{end}}
+
+                {{if .Email}}
+                <b>Email:</b>{{.Email}}<br>
+                {{end}}
+            </dl>
+            {{if .AtividadePrimaria}}
+            <h3>Atividades Econômicas Primárias</h3>
+            <table id="tabelaAtividadesPrimarias" class="tablesorter">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .AtividadeSecundaria}}
+                <tr>
+                    <td>{{.Code}}</td>
+                    <td>{{.Text}}</td>
+                </tr>
+                {{end}}
+                </tbody>
+            </table>
+            {{end}}
+            {{if .AtividadeSecundaria}}
+            <h3>Atividades Econômicas Secundárias</h3>
+            <table id="tabelaAtividadesSecundarias" class="tablesorter">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .AtividadeSecundaria}}
+                <tr>
+                    <td>{{.Code}}</td>
+                    <td>{{.Text}}</td>
+                </tr>
+                {{end}}
+                </tbody>
+            </table>
+            {{end}}
+            {{if .ResumoContratos}}
+                <h3>Resumo Contratos</h3>
+                <dl class="alt">
+                    <dt>Valor: </dt>
+                    <dd>R$ {{.ResumoContratos.ValorContratos}}</dd>
+                    <dt>Qtd: </dt>
+                    <dd>{{.ResumoContratos.NumContratos}}</dd>
+                    </dl>
+                {{if .ResumoContratos.Municipios}}
+                    <h4>Por Município</h4>
+                    <table id="tabelaMunicipios" class="tablesorter">
+                        <thead>
+                        <tr>
+                            <th>Município</th>
+                            <th>Partido</th>
+                            <th>Valor</th>
+                            <th>Qtd</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                    {{range .ResumoContratos.Municipios}}
+                                <tr>
+                                    <td>{{.Nome}}</td>
+                                    <td>{{.SiglaPartido}}</td>
+                                    <td>{{.ResumoContratos.Valor}}</td>
+                                    <td>{{.ResumoContratos.Quantidade}}</td>
+                                </tr>
+                    {{end}}
+                        </tbody>
+                    </table>
+                {{end}}
+                {{if .ResumoContratos.Partidos}}
+                <h4>Por Partido</h4>
+                <table id="tabelaPartidos" class="tablesorter">
+                    <thead>
+                    <tr>
+                        <th>Partido</th>
+                        <th>Valor</th>
+                        <th>Qtd</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{range .ResumoContratos.Partidos}}
+                    <tr>
+                        <td>{{.Sigla}}</td>
+                        <td>{{.ResumoContratos.Valor}}</td>
+                        <td>{{.ResumoContratos.Quantidade}}</td>
+                    </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+                {{end}}
+            {{end}}
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <p class="copyright">&copy; contratospublicos.info. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.8/js/jquery.tablesorter.min.js"></script>
+
+<script>
+    $(document).ready(function()
+        {
+             $("#tabelaMunicipios").tablesorter( {sortList: [[2,1]]});
+             $("#tabelaPartidos").tablesorter( {sortList: [[1,1]]});
+             $("#tabelaAtividadesPrimarias").tablesorter( {sortList: [[0,0]]});
+             $("#tabelaAtividadesSecundarias").tablesorter( {sortList: [[0,0]]});
+        }
+    );
+</script>
+</body>
+</html>
+{{end}}

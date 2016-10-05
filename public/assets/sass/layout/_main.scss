@@ -37,7 +37,7 @@
 
 		@include breakpoint(large) {
 			> .main {
-				@include padding(4em, 4em);
+				@include padding(2em, 4em);
 
 				> .image.main:first-child {
 					margin: -4em 0 4em -4em;
@@ -48,7 +48,7 @@
 
 		@include breakpoint(medium) {
 			> .main {
-				@include padding(4em, 3em);
+				@include padding(2em, 3em);
 
 				> .image.main:first-child {
 					margin: -4em 0 4em -3em;
@@ -59,7 +59,7 @@
 
 		@include breakpoint(small) {
 			> .main {
-				@include padding(3em, 2em);
+				@include padding(1.5em, 2em);
 
 				> .image.main:first-child {
 					margin: -3em 0 2em -2em;
@@ -70,7 +70,7 @@
 
 		@include breakpoint(xsmall) {
 			> .main {
-				@include padding(3em, 1.5em);
+				@include padding(1.5em, 1.5em);
 
 				> .image.main:first-child {
 					margin: -3em 0 1.5em -1.5em;
@@ -83,7 +83,7 @@
 			border-radius: 0;
 
 			> .main {
-				@include padding(2.5em, 1em);
+				@include padding(1.25em, 1em);
 
 				> .image.main:first-child {
 					margin: -2.5em 0 1.5em -1em;

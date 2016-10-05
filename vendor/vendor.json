@@ -85,6 +85,12 @@
 			"revisionTime": "2016-09-25T18:11:33Z"
 		},
 		{
+			"checksumSHA1": "BJbx2xr8/HGOUMuWbL8+PaCB1PY=",
+			"path": "github.com/leekchan/accounting",
+			"revision": "8843ffbc785acfcb4bfefcff20e46f6cb6338ee1",
+			"revisionTime": "2015-08-22T04:52:52Z"
+		},
+		{
 			"checksumSHA1": "ugnSryGF6VPBb5s87QgoRH6730g=",
 			"path": "github.com/mattn/go-colorable",
 			"revision": "6c903ff4aa50920ca86087a280590b36b3152b9c",

@@ -48,6 +48,30 @@
 		-webkit-text-size-adjust: none;
 	}
 
+    /* Busca */
+    .search {
+      position: relative;
+      color: #aaa;
+      font-size: 16px;
+    }
+
+    .search input {
+      width: 250px;
+      height: 32px;
+
+      background: #fcfcfc;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      box-shadow: 0 0 3px #ccc, 0 10px 15px #ebebeb inset;
+    }
+
+    .search input { text-indent: 32px;}
+    .search .fa-search {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+
 /* Box Model */
 
 	*, *:before, *:after {
@@ -3624,7 +3648,7 @@
 		@media screen and (max-width: 1280px) {
 
 			#main > .main {
-				padding: 4em 4em 2em 4em ;
+				padding: 2em 4em 2em 4em ;
 			}
 
 				#main > .main > .image.main:first-child {
@@ -3637,7 +3661,7 @@
 		@media screen and (max-width: 980px) {
 
 			#main > .main {
-				padding: 4em 3em 2em 3em ;
+				padding: 2em 3em 2em 3em ;
 			}
 
 				#main > .main > .image.main:first-child {
@@ -3650,7 +3674,7 @@
 		@media screen and (max-width: 736px) {
 
 			#main > .main {
-				padding: 3em 2em 1em 2em ;
+				padding: 1.5em 2em 1em 2em ;
 			}
 
 				#main > .main > .image.main:first-child {
@@ -3663,7 +3687,7 @@
 		@media screen and (max-width: 480px) {
 
 			#main > .main {
-				padding: 3em 1.5em 1em 1.5em ;
+				padding: 1.5em 1.5em 1em 1.5em ;
 			}
 
 				#main > .main > .image.main:first-child {
@@ -3680,7 +3704,7 @@
 			}
 
 				#main > .main {
-					padding: 2.5em 1em 0.5em 1em ;
+					padding: 1.25em 1em 0.5em 1em ;
 				}
 
 					#main > .main > .image.main:first-child {

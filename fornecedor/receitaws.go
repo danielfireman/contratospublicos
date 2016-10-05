@@ -32,6 +32,7 @@ type DadosReceitaWS struct {
 	NaturezaJuridica      string       `json:"natureza_juridica"`
 	NomeFantasia          string       `json:"fantasia"`
 	UltimaAtualizacao     string       `json:"ultima_atualizacao"`
+	Email                 string       `json:"email,omitempty"`
 
 	// Error
 	Status  string `json:"status"`
@@ -44,7 +45,7 @@ type Atividade struct {
 }
 
 const (
-	timeout = 500 * time.Millisecond
+	timeout = 1000 * time.Millisecond
 	url     = "http://receitaws.com.br/v1/cnpj/"
 )
 
@@ -94,6 +95,7 @@ func (c *coletorReceitaWS) ColetaDados(ctx context.Context, fornecedor *model.Fo
 		return fmt.Errorf("Error calling receitaws: '%s'", dr.Message)
 	}
 	fornecedor.DataSituacao = dr.DataSituacao
+	fornecedor.Nome = dr.Nome
 	fornecedor.Tipo = dr.Tipo
 	fornecedor.Situacao = dr.Situacao
 	fornecedor.NomeReceita = dr.Nome
@@ -104,11 +106,12 @@ func (c *coletorReceitaWS) ColetaDados(ctx context.Context, fornecedor *model.Fo
 	fornecedor.DataAbertura = dr.DataAbertura
 	fornecedor.NaturezaJuridica = dr.NaturezaJuridica
 	fornecedor.NomeFantasia = dr.NomeFantasia
-	fornecedor.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
 	fornecedor.Bairro = dr.Bairro
 	fornecedor.Logradouro = dr.Logradouro
-	fornecedor.Numero = dr.CEP
+	fornecedor.Numero = dr.Numero
 	fornecedor.CEP = dr.CEP
+	fornecedor.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
+	fornecedor.Email = dr.Email
 	for _, a := range dr.AtividadePrincipal {
 		fornecedor.AtividadesPrincipais = append(fornecedor.AtividadesPrincipais, &model.Atividade{
 			Text: a.Text,
