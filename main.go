@@ -30,11 +30,11 @@ func main() {
 	agent.CollectHTTPStatuses = true
 	agent.CollectMemoryStat = true
 	agent.NewrelicPollInterval = 120
-	/*if err := agent.Run(); err != nil {
+	if err := agent.Run(); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Monitoramento NewRelic configurado com sucesso.")
-	*/
+	
 
 	// Configuração do roteador echo.
 	e := echo.New()
