@@ -32,7 +32,6 @@ type DadosReceitaWS struct {
 	NaturezaJuridica      string       `json:"natureza_juridica"`
 	NomeFantasia          string       `json:"fantasia"`
 	UltimaAtualizacao     string       `json:"ultima_atualizacao"`
-	Email                 string       `json:"email,omitempty"`
 
 	// Error
 	Status  string `json:"status"`
@@ -111,7 +110,6 @@ func (c *coletorReceitaWS) ColetaDados(ctx context.Context, fornecedor *model.Fo
 	fornecedor.Numero = dr.Numero
 	fornecedor.CEP = dr.CEP
 	fornecedor.UltimaAtualizacaoReceita = dr.UltimaAtualizacao
-	fornecedor.Email = dr.Email
 	for _, a := range dr.AtividadePrincipal {
 		fornecedor.AtividadesPrincipais = append(fornecedor.AtividadesPrincipais, &model.Atividade{
 			Text: a.Text,

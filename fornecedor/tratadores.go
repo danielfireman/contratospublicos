@@ -146,7 +146,6 @@ func (t *T) TrataPaginaFornecedor() func(c echo.Context) error {
 		fVO.Tipo = f.Tipo
 		fVO.DataAbertura = f.DataAbertura
 		fVO.EstaAtiva = f.Situacao == "ATIVA"
-		fVO.Email = f.Email
 		fVO.AtividadePrimaria = f.AtividadesPrincipais
 		fVO.AtividadeSecundaria = f.AtividadesSecundarias
 

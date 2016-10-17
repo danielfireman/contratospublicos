@@ -19,7 +19,6 @@ type Fornecedor struct {
 	Situacao                 string                     `json:"situacao,omitempty"`
 	NomeReceita              string                     `json:"nome_receita,omitempty"`
 	Telefone                 string                     `json:"telefone,omitempty"`
-	Email                    string                     `json:"email,omitempty"`
 	UltimaAtualizacaoReceita string                     `json:"ultima_atualizacao_receita,omitempty"`
 	AtividadesPrincipais     []*Atividade               `json:"atividades_principais,omitempty"`
 	AtividadesSecundarias    []*Atividade               `json:"atividades_secundarias,omitempty"`
