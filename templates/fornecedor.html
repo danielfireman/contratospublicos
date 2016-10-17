@@ -172,10 +172,30 @@
 <script>
     $(document).ready(function()
         {
-             $("#tabelaMunicipios").tablesorter( {sortList: [[2,1]]});
-             $("#tabelaPartidos").tablesorter( {sortList: [[1,1]]});
-             $("#tabelaAtividadesPrimarias").tablesorter( {sortList: [[0,0]]});
-             $("#tabelaAtividadesSecundarias").tablesorter( {sortList: [[0,0]]});
+             $("#tabelaMunicipios").tablesorter({
+                sortList: [[2,1]],
+                textExtraction: function(node){
+                    return $(node).text().replace(/,.]/g,'');
+                }
+             });
+             $("#tabelaPartidos").tablesorter({
+                sortList: [[1,1]],
+                textExtraction: function(node){
+                    return $(node).text().replace(/,.]/g,'');
+                }
+             });
+             $("#tabelaAtividadesPrimarias").tablesorter({
+                sortList: [[0,0]],
+                textExtraction: function(node){
+                    return $(node).text().replace(/,.]/g,'');
+                }
+             });
+             $("#tabelaAtividadesSecundarias").tablesorter({
+                sortList: [[0,0]],
+                textExtraction: function(node){
+                    return $(node).text().replace(/,.]/g,'');
+                }
+             });
         }
     );
 </script>
