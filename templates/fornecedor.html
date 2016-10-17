@@ -5,6 +5,14 @@
     <title>{{.Nome}}</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- Open graph tags -->
+    <meta property="og:url"                content="https://www.contratospublicos.info/fornecedor?cnpj={{.Cnpj}}" />
+    <meta property="og:type"               content="website" />
+    <meta property="og:title"              content="{{.Nome}}" />
+    <meta property="og:locale"             content="pt_BR" />
+    <meta property="og:description"        content="Resumo dos contratos públicos de {{.Nome}} {{.Cnpj}} {{if .Tipo}} &bull; {{.Tipo}}{{end}} &bull; {{.Legislatura}}" />
+    <meta property="og:image"              content="http://www.contratospublicos.info/images/logo.svg" />
+
     <!--[if lte IE 8]>
     <script src="assets/js/ie/html5shiv.js"></script><![endif]-->
     <link rel="stylesheet" href="assets/css/main.css"/>
