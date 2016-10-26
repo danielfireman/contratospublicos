@@ -29,8 +29,7 @@
 
 <!-- Wrapper -->
 <div id="wrapper">
-
-    <!-- Header -->
+    <!-- Header
     <header id="header" class="alt">
         <span class="logo"><img src="images/logo.svg" alt=""/></span>
         <h1>Contratos Públicos.Info</h1>
@@ -38,46 +37,46 @@
         <p><a href="http://github.com/danielfireman/contratospublicos" target="_blank" class="icon fa-github alt"><span
                 class="label">GitHub</span></a>
     </header>
-
+    -->
     <!-- Nav -->
     <nav id="nav">
-        <ul>
-            <li><a href="#sobre">Sobre a ferramenta</a></li>
-            <li><a href="#search">Busca</a></li>
-            <li><a href="#api">API</a></li>
-            <li><a href="#sugestoes">Sugestões e Problemas</a></li>
-        </ul>
+        <div>
+            <div style="float:left">
+                <a href="/">Contratos Públicos.info</a>
+            </div>
+            <div style="text-align:right">
+                <ul>
+                    <li><a href="#api">API</a></li>
+                </ul>
+            </div>
+        </div>
     </nav>
 
     <!-- Main -->
+    <p></p>
     <div id="main">
-        <section id="sobre" class="main">
-            <div class="spotlight">
-                <div class="content">
-                    <p>
-                        Contratos Públicos é uma ferramenta criada com o objetivo de aumentar a transparência
-                        no relacionamentos entre empresas e o setor público. A idéia é simples: em posse do
-                        CNPJ da empresa, qualquer um pode realizar uma busca e ter acesso ao resumo dos
-                        contratos da empresa em uma determinada gestão (legislatura). Além do resumo geral,
-                        você também terá acesso ao resumo por município e por partido político.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section id="search" class="main">
+        <section id="searchMenu" class="main">
             <div class="spotlight">
                 <div class="content">
                     <header class="major">
-                        <h2>Busca</h2>
+                        <h2>Contratos Públicos.info</h2>
                     </header>
                     <div class="search">
                         <form method="GET" action="fornecedor">
-                            <span class="fa fa-search" title="Digite o CNPJ do fornecedor e pressione enter para realizar a busca."></span>
-                            <input placeholder="CNPJ do Fornecedor" name="cnpj">
+                            <div class="row" style="inline">
+                                <div class="4u 12u$(xsmall)">
+                                    <span class="fa fa-search" title="Digite o CNPJ do fornecedor e pressione enter para realizar a busca."></span>
+                                    <input type="text" name="cnpj" id="cnpj" value="" placeholder="CNPJ Fornecedor" size="20"/>
+                                </div>
+                            </div>
                         </form>
                     </div>
-                    <p>Digite o CNPJ do fornecedor e pressione enter para realizar a busca.</p>
+                    <p align="left">Contratos Públicos é uma ferramenta criada com o objetivo de aumentar a transparência
+                    no relacionamentos entre empresas e o setor público. A idéia é simples: em posse do
+                    CNPJ da empresa, qualquer um pode realizar uma busca e ter acesso ao resumo dos
+                    contratos da empresa em uma determinada gestão (legislatura). Além do resumo geral,
+                    você também terá acesso ao resumo por município e por partido político.
+                    </p>
                 </div>
             </div>
         </section>
@@ -87,31 +86,22 @@
                     <header class="major">
                         <h2>API</h2>
                     </header>
-                    <p><b>URL: </b><code>GET</code> <a href="https://contratospublicos.info/api/v1/fornecedor" target="_blank">https://contratospublicos.info/api/v1/fornecedor</a><br>
-                    <p><b>Parâmetros de Consulta</b>
-                    <ul>
-                        <li><b>cnpj:</b> [string, obrigatório] CNPJ do fornecedor a ser pesquisado.
-                        <li><b>legislatura:</b> [número, opcional] ano inicial da legislatura a ser pesquisada. Valores {2008|2012}. Valor padrão 2012.
-                    </ul>
-                    </p>
-                    <p><b>Exemplos:</b><br>
-                    <ul>
-                        <li><a href="https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40" target="_blank">https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40</a></li>
-                        <li><a href="https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40&legislatura=2008" target="_blank">https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40&legislatura=2008</a></li>
-                    </ul>
-                    </p>
+                    <div style="text-align:left">
+                        <p><b>URL: </b><code>GET</code> <a href="https://contratospublicos.info/api/v1/fornecedor" target="_blank">https://contratospublicos.info/api/v1/fornecedor</a><br>
+                        <p><b>Parâmetros de Consulta</b>
+                        <ul>
+                            <li><b>cnpj:</b> [string, obrigatório] CNPJ do fornecedor a ser pesquisado.
+                            <li><b>legislatura:</b> [número, opcional] ano inicial da legislatura a ser pesquisada. Valores {2008|2012}. Valor padrão 2012.
+                        </ul>
+                        </p>
+                        <p><b>Exemplos:</b>
+                        <ul>
+                            <li><a href="https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40" target="_blank">https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40</a></li>
+                            <li><a href="https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40&legislatura=2008" target="_blank">https://contratospublicos.info/api/v1/fornecedor?cnpj=09.095.183/0001-40&legislatura=2008</a></li>
+                        </ul>
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </section>
-        <section id="sugestoes" class="main">
-            <div class="spotlight">
-                <div class="content">
-                    <header class="major">
-                        <h2>Sugestões e Problemas</h2>
-                    </header>
-                    Favor entrar em contato via <a class="action" href="https://github.com/danielfireman/contratospublicos/issues/new" target="_blank">issues do Github</a>
-                </div>
-                <!--<span class="image"><img src="images/pic01.jpg" alt="" /></span>-->
             </div>
         </section>
     </div>
@@ -120,7 +110,6 @@
     <footer id="footer">
         <p class="copyright">&copy; contratospublicos.info. Design: <a href="https://html5up.net" target="_blank">HTML5 UP</a>.</p>
     </footer>
-
 </div>
 
 <!-- Scripts -->

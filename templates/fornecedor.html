@@ -26,34 +26,35 @@
 <body>
 <!-- Wrapper -->
 <div id="wrapper">
-    <!-- Header -->
-    <header id="header">
-        <h1>{{.Nome}}</h1>
-        <p><b>{{.Cnpj}} {{if .Tipo}} &bull; {{.Tipo}}{{end}} &bull; {{.Legislatura}}</b></p>
-    </header>
-
     <nav id="nav">
-        <ul>
-            <li><a href="#dados">A Empresa</a></li>
-            {{if .ResumoContratos.Municipios}}
-                <li><a href="#municipio">Contratos por Município</a></li>
-            {{end}}
-            {{if .ResumoContratos.Partidos}}
-                <li><a href="#partido">Contratos por Partido</a></li>
-            {{end}}
-        </ul>
+        <div>
+            <div style="float:left">
+                <a href="/">Contratos Públicos.info</a>
+            </div>
+            <div style="text-align:right">
+                <ul>
+                    <li><a href="#dados">A Empresa</a></li>
+                    {{if .ResumoContratos.Municipios}}
+                    <li><a href="#municipio">Contratos por Município</a></li>
+                    {{end}}
+                    {{if .ResumoContratos.Partidos}}
+                    <li><a href="#partido">Contratos por Partido</a></li>
+                    {{end}}
+                </ul>
+            </div>
+        </div>
     </nav>
 
     <!-- Main -->
+    <p></p>
     <div id="main">
         <section id="dados" class="main">
             <div class="spotlight">
                 <div class="content">
                     <header class="major">
-                        <h2>A Empresa</h2>
+                        <h2>{{.NomeFantasia}}</h2>
                     </header>
-                    <dl class="alt">
-                        <b>Nome:</b>&nbsp;&nbsp;{{.NomeFantasia}}<br>
+                    <dl class="alt align-left">
                         <b>CNPJ:</b>&nbsp;&nbsp;{{.Cnpj}}<br>
                         <b>Tipo:</b>&nbsp;&nbsp;{{.Tipo}}<br>
 
@@ -194,6 +195,13 @@
 </script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.8/js/jquery.tablesorter.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/jquery.scrolly.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<!--[if lte IE 8]>
+<script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="assets/js/main.js"></script>
 
 <script>
     $(document).ready(function()
