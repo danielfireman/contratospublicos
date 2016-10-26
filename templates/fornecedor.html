@@ -32,101 +32,128 @@
         <p><b>{{.Cnpj}} {{if .Tipo}} &bull; {{.Tipo}}{{end}} &bull; {{.Legislatura}}</b></p>
     </header>
 
+    <nav id="nav">
+        <ul>
+            <li><a href="#dados">A Empresa</a></li>
+            {{if .ResumoContratos.Municipios}}
+                <li><a href="#municipio">Contratos por Município</a></li>
+            {{end}}
+            {{if .ResumoContratos.Partidos}}
+                <li><a href="#partido">Contratos por Partido</a></li>
+            {{end}}
+        </ul>
+    </nav>
+
     <!-- Main -->
     <div id="main">
-        <span style="padding-left:1em">{{if .UltimaAtualizacao}}Última atualização: {{.UltimaAtualizacao}} dias atrás{{end}}</span>
-        <span style="padding-left:0.5em">{{if .EstaAtiva}}<i class="fa fa-check-circle-o" aria-hidden="true"
-                                                             title="Situação: Ativa"></i>{{end}}</span>
-        <!-- Content -->
-        <section id="content" class="main">
-            <dl class="alt">
-                {{if .NomeFantasia}}
-                <b>Nome Fantasia:</b>&nbsp;&nbsp;{{.NomeFantasia}}<br>
-                {{end}}
+        <section id="dados" class="main">
+            <div class="spotlight">
+                <div class="content">
+                    <header class="major">
+                        <h2>A Empresa</h2>
+                    </header>
+                    <dl class="alt">
+                        <b>Nome:</b>&nbsp;&nbsp;{{.NomeFantasia}}<br>
+                        <b>CNPJ:</b>&nbsp;&nbsp;{{.Cnpj}}<br>
+                        <b>Tipo:</b>&nbsp;&nbsp;{{.Tipo}}<br>
 
-                {{if .DataAbertura}}
-                <b>Abertura:</b>&nbsp;&nbsp;{{.DataAbertura}}<br>
-                {{end}}
+                        {{if .DataAbertura}}
+                        <b>Abertura:</b>&nbsp;&nbsp;{{.DataAbertura}}<br>
+                        {{end}}
 
-                {{if .EnderecoParte1}}
-                <b>Endereço:</b>&nbsp;&nbsp;{{.EnderecoParte1}} &bull; {{.EnderecoParte2}}<br>
-                {{end}}
+                        {{if .EnderecoParte1}}
+                        <b>Endereço:</b>&nbsp;&nbsp;{{.EnderecoParte1}} &bull; {{.EnderecoParte2}}<br>
+                        {{end}}
 
-                {{if .Telefone}}
-                <b>Fone:</b>&nbsp;&nbsp;{{.Telefone}}<br>
-                {{end}}
-            </dl>
-            {{if .AtividadePrimaria}}
-            <h3>Atividades Econômicas Primárias</h3>
-            <table id="tabelaAtividadesPrimarias" class="tablesorter">
-                <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Descrição</th>
-                </tr>
-                </thead>
-                <tbody>
-                {{range .AtividadeSecundaria}}
-                <tr>
-                    <td>{{.Code}}</td>
-                    <td>{{.Text}}</td>
-                </tr>
-                {{end}}
-                </tbody>
-            </table>
-            {{end}}
-            {{if .AtividadeSecundaria}}
-            <h3>Atividades Econômicas Secundárias</h3>
-            <table id="tabelaAtividadesSecundarias" class="tablesorter">
-                <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Descrição</th>
-                </tr>
-                </thead>
-                <tbody>
-                {{range .AtividadeSecundaria}}
-                <tr>
-                    <td>{{.Code}}</td>
-                    <td>{{.Text}}</td>
-                </tr>
-                {{end}}
-                </tbody>
-            </table>
-            {{end}}
-            {{if .ResumoContratos}}
-                <h3>Resumo Contratos</h3>
+                        {{if .Telefone}}
+                        <b>Fone:</b>&nbsp;&nbsp;{{.Telefone}}<br>
+                        {{end}}
+                    </dl>
+                    {{if .AtividadePrimaria}}
+                    <h3>Atividades Econômicas Primárias</h3>
+                    <table id="tabelaAtividadesPrimarias" class="tablesorter">
+                        <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range .AtividadeSecundaria}}
+                        <tr>
+                            <td>{{.Code}}</td>
+                            <td>{{.Text}}</td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                    {{end}}
+                    {{if .AtividadeSecundaria}}
+                    <h3>Atividades Econômicas Secundárias</h3>
+                    <table id="tabelaAtividadesSecundarias" class="tablesorter">
+                        <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range .AtividadeSecundaria}}
+                        <tr>
+                            <td>{{.Code}}</td>
+                            <td>{{.Text}}</td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                    {{end}}
+                </div>
+            </div>
+        </section>
+        {{if .ResumoContratos.Municipios}}
+            <section id="municipio" class="main">
+                <header class="major">
+                    <h2>Contratos Por Município</h2>
+                </header>
+                <dl class="alt">
+                        <dt>Valor: </dt>
+                        <dd>R$ {{.ResumoContratos.ValorContratos}}</dd>
+                        <dt>Qtd: </dt>
+                        <dd>{{.ResumoContratos.NumContratos}}</dd>
+                </dl>
+                <table id="tabelaMunicipios" class="tablesorter">
+                    <thead>
+                    <tr>
+                        <th>Município</th>
+                        <th>Partido</th>
+                        <th>Valor (R$)</th>
+                        <th>Qtd</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {{range .ResumoContratos.Municipios}}
+                            <tr>
+                                <td>{{.Nome}}</td>
+                                <td>{{.SiglaPartido}}</td>
+                                <td>{{.ResumoContratos.Valor}}</td>
+                                <td>{{.ResumoContratos.Quantidade}}</td>
+                            </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </section>
+        {{end}}
+        {{if .ResumoContratos.Partidos}}
+            <section id="partido" class="main">
+                <header class="major">
+                    <h2>Contratos Por Partido</h2>
+                </header>
                 <dl class="alt">
                     <dt>Valor: </dt>
                     <dd>R$ {{.ResumoContratos.ValorContratos}}</dd>
                     <dt>Qtd: </dt>
                     <dd>{{.ResumoContratos.NumContratos}}</dd>
-                    </dl>
-                {{if .ResumoContratos.Municipios}}
-                    <h4>Por Município</h4>
-                    <table id="tabelaMunicipios" class="tablesorter">
-                        <thead>
-                        <tr>
-                            <th>Município</th>
-                            <th>Partido</th>
-                            <th>Valor (R$)</th>
-                            <th>Qtd</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                    {{range .ResumoContratos.Municipios}}
-                                <tr>
-                                    <td>{{.Nome}}</td>
-                                    <td>{{.SiglaPartido}}</td>
-                                    <td>{{.ResumoContratos.Valor}}</td>
-                                    <td>{{.ResumoContratos.Quantidade}}</td>
-                                </tr>
-                    {{end}}
-                        </tbody>
-                    </table>
-                {{end}}
-                {{if .ResumoContratos.Partidos}}
-                <h4>Por Partido</h4>
+                </dl>
                 <table id="tabelaPartidos" class="tablesorter">
                     <thead>
                     <tr>
@@ -145,9 +172,8 @@
                     {{end}}
                     </tbody>
                 </table>
-                {{end}}
-            {{end}}
-        </section>
+            </section>
+        {{end}}
     </div>
 
     <!-- Footer -->
