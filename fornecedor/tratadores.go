@@ -5,14 +5,15 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
+	"html/template"
 	"strconv"
 	"time"
 
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/store"
-	"github.com/labstack/echo"
 	"github.com/leekchan/accounting"
+	"github.com/julienschmidt/httprouter"
+	"encoding/json"
 )
 
 const (
@@ -47,21 +48,27 @@ func Tratadores() (*T, error) {
 	}, err
 }
 
-func (t *T) TrataAPICall() func(c echo.Context) error {
-	return func(c echo.Context) error {
-		id, legislatura := extraiParametros(c)
+func (t *T) TrataAPICall() func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		id, legislatura := extraiParametros(r)
 		if id == "" {
-			return c.String(http.StatusBadRequest, "CNPJ inválido.")
+			http.Error(w, "CNPJ inválido.", http.StatusBadRequest)
+			return
 		}
 		resultado, err := t.buscador.ColetaDados(id, legislatura)
 		if err != nil {
 			if NaoEncontrado(err) {
-				return c.NoContent(http.StatusNotFound)
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
 			}
 			log.Println("Err id:'%s' err:'%q'", id, err)
-			return c.NoContent(http.StatusInternalServerError)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
-		return c.JSON(http.StatusOK, resultado)
+		if err := json.NewEncoder(w).Encode(&resultado); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
@@ -106,19 +113,24 @@ type partidoVO struct {
 	ResumoContratos resumoContratosVO
 }
 
-func (t *T) TrataPaginaFornecedor() func(c echo.Context) error {
-	return func(c echo.Context) error {
-		id, legislatura := extraiParametros(c)
+var fornecedorTmpl = template.Must(template.New("fornecedor").ParseFiles("fornecedor/fornecedor.html"))
+
+func (t *T) TrataPaginaFornecedor() func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		id, legislatura := extraiParametros(r)
 		if id == "" {
-			return c.String(http.StatusBadRequest, "CNPJ inválido.")
+			http.Error(w, "CNPJ inválido.", http.StatusBadRequest)
+			return
 		}
 		f, err := t.buscador.ColetaDados(id, legislatura)
 		if err != nil {
 			if NaoEncontrado(err) {
-				return c.NoContent(http.StatusNotFound)
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
 			}
 			log.Println("Err id:'%s' err:'%q'", id, err)
-			return c.NoContent(http.StatusInternalServerError)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
 		fVO := fornecedorVO{}
 		fVO.Cnpj = f.Cnpj
@@ -173,19 +185,22 @@ func (t *T) TrataPaginaFornecedor() func(c echo.Context) error {
 				},
 			})
 		}
-		return c.Render(http.StatusOK, "fornecedor", &fVO)
+		if err := fornecedorTmpl.Execute(w, &fVO); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 
-func extraiParametros(c echo.Context) (string, string) {
-	legislatura := c.QueryParam("legislatura")
+func extraiParametros(r *http.Request) (string, string) {
+	query := r.URL.Query()
+	legislatura := query.Get("legislatura")
 	if legislatura == "" {
 		legislatura = "2012"
 	}
 
 	// NOTA: Utilizando parametros de consulta para permitir que usuários copiem e colem CNPJs
 	// completos.
-	id := c.QueryParam("cnpj")
+	id := query.Get("cnpj")
 	if id == "" {
 		return "", legislatura
 	}
