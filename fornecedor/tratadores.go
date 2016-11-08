@@ -1,19 +1,20 @@
 package fornecedor
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 	"time"
-	"html/template"
+
+	"encoding/json"
 
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/store"
-	"github.com/leekchan/accounting"
 	"github.com/julienschmidt/httprouter"
-	"encoding/json"
+	"github.com/leekchan/accounting"
 )
 
 const (
@@ -21,8 +22,8 @@ const (
 )
 
 type T struct {
-	buscador *Buscador
-	ac       accounting.Accounting
+	buscador       *Buscador
+	ac             accounting.Accounting
 	fornecedorTmpl *template.Template
 }
 
@@ -47,7 +48,7 @@ func Tratadores(fornecedorTmpl *template.Template) (*T, error) {
 			Decimal:   ",",
 			Thousand:  ".",
 		},
-		fornecedorTmpl:fornecedorTmpl,
+		fornecedorTmpl: fornecedorTmpl,
 	}, err
 }
 

@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"net/http"
 	"html/template"
+	"net/http"
 
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/julienschmidt/httprouter"
