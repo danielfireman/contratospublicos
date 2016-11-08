@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"html/template"
 	"strconv"
 	"time"
+	"html/template"
 
 	"github.com/danielfireman/contratospublicos/model"
 	"github.com/danielfireman/contratospublicos/store"
@@ -23,9 +23,11 @@ const (
 type T struct {
 	buscador *Buscador
 	ac       accounting.Accounting
+	fornecedorTmpl *template.Template
 }
 
-func Tratadores() (*T, error) {
+// TODO(danielfireman): Refatorar e tirar as páginas renderizadoras de tamplate.
+func Tratadores(fornecedorTmpl *template.Template) (*T, error) {
 	s, err := store.MongoDB(os.Getenv("MONGODB_URI"), DB)
 	if err != nil {
 		return nil, err
@@ -45,6 +47,7 @@ func Tratadores() (*T, error) {
 			Decimal:   ",",
 			Thousand:  ".",
 		},
+		fornecedorTmpl:fornecedorTmpl,
 	}, err
 }
 
@@ -112,8 +115,6 @@ type partidoVO struct {
 	Sigla           string
 	ResumoContratos resumoContratosVO
 }
-
-var fornecedorTmpl = template.Must(template.New("fornecedor").ParseFiles("fornecedor/fornecedor.html"))
 
 func (t *T) TrataPaginaFornecedor() func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -185,7 +186,7 @@ func (t *T) TrataPaginaFornecedor() func(w http.ResponseWriter, r *http.Request,
 				},
 			})
 		}
-		if err := fornecedorTmpl.Execute(w, &fVO); err != nil {
+		if err := t.fornecedorTmpl.Execute(w, &fVO); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}

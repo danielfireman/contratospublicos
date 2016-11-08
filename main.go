@@ -5,10 +5,13 @@ import (
 	"os"
 
 	"net/http"
+	"html/template"
 
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/julienschmidt/httprouter"
 )
+
+var fornecedorTmpl = template.Must(template.New("fornecedor").ParseFiles("./fornecedor/fornecedor.html"))
 
 func main() {
 	port := os.Getenv("PORT")
@@ -27,7 +30,7 @@ func main() {
 	})
 
 	// Lida com fornecedores
-	fTratadores, err := fornecedor.Tratadores()
+	fTratadores, err := fornecedor.Tratadores(fornecedorTmpl)
 	if err != nil {
 		log.Fatal(err)
 	}
