@@ -1,6 +1,6 @@
 # Contratos Públicos
 
-> Resumo dos gastos que o governos estadual e municipal tem com fornecedores
+> Resumo dos gastos que governos estaduais e municipais tem com fornecedores
 
 [![Build Status][build-badge]][build-status] [![Coverage Status][cov-badge]][cov-status]
 
