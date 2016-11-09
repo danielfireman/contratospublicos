@@ -31,7 +31,9 @@ func (b *Buscador) ColetaDados(id, legislatura string) (*model.Fornecedor, error
 		go func(coletor ColetorDadosFornecedor, res *model.Fornecedor) {
 			defer wg.Done()
 			if err := coletor.ColetaDados(ctx, res); err != nil {
-				log.Println("Err id:'%s' err:'%q'", id, err)
+				if !NaoEncontrado(err) {
+					log.Printf("Err id:'%s' err:'%q'\n", id, err)
+				}
 			}
 		}(coletor, resultado)
 	}

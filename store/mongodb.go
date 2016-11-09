@@ -17,18 +17,23 @@ func (s *mongoDBStore) FindByID(c string, id string, ret interface{}) error {
 	defer session.Close()
 	err := session.DB(s.db).C(c).Find(bson.M{"id": id}).One(ret)
 	if err == mgo.ErrNotFound {
-		return NaoEncontradoErr{err}
+		return NaoEncontradoErr(err)
 	}
 	return err
 }
 
-func MongoDB(uri, db string) (Store, error) {
+func MongoDB(uri string) (Store, error) {
 	if uri == "" {
 		return nil, fmt.Errorf("MongoDB URI inválida.")
 	}
-	s, err := mgo.Dial(uri)
+	info, err := mgo.ParseURL(uri)
+	if err != nil {
+		return nil, fmt.Errorf("Erro processando URI:%s err:%q\n", uri, err)
+	}
+	s, err := mgo.DialWithInfo(info)
 	if err != nil {
 		return nil, err
 	}
-	return &mongoDBStore{s, db}, nil
+	s.SetMode(mgo.Monotonic, true)
+	return &mongoDBStore{s, info.Database}, nil
 }

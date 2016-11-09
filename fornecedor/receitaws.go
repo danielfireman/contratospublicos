@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/danielfireman/contratospublicos/model"
+	"strings"
+	"github.com/danielfireman/contratospublicos/store"
 )
 
 type DadosReceitaWS struct {
@@ -91,7 +93,10 @@ func (c *coletorReceitaWS) ColetaDados(ctx context.Context, fornecedor *model.Fo
 		return err
 	}
 	if dr.Status != "OK" {
-		return fmt.Errorf("Error calling receitaws: '%s'", dr.Message)
+		if strings.Contains(dr.Message, "CNPJ inválido") {
+			return store.NaoEncontradoErr(fmt.Errorf("CNPJ não encontrado: " + fornecedor.ID))
+		}
+		return fmt.Errorf("Error calling receitaws: '%s' response:'%+v'", dr.Message, dr)
 	}
 	fornecedor.DataSituacao = dr.DataSituacao
 	fornecedor.Nome = dr.Nome

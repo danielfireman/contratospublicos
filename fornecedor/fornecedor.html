@@ -52,11 +52,17 @@
             <div class="spotlight">
                 <div class="content">
                     <header class="major">
-                        <h2>{{.NomeFantasia}}</h2>
+                        {{if .NomeFantasia}}
+                            <h2>{{.NomeFantasia}}</h2>
+                        {{else}}
+                            <h2>{{.Nome}}</h2>
+                        {{end}}
                     </header>
                     <dl class="alt align-left">
                         <b>CNPJ:</b>&nbsp;&nbsp;{{.Cnpj}}<br>
+                        {{if .Tipo}}
                         <b>Tipo:</b>&nbsp;&nbsp;{{.Tipo}}<br>
+                        {{end}}
 
                         {{if .DataAbertura}}
                         <b>Abertura:</b>&nbsp;&nbsp;{{.DataAbertura}}<br>

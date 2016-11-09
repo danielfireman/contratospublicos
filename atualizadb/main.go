@@ -10,11 +10,14 @@ import (
 	"os"
 	"strconv"
 
+
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/danielfireman/contratospublicos/model"
 
 	"gopkg.in/mgo.v2"
 )
+
+var dbURI = flag.String("dburi", "", "URI completa do mongo db que vai ser populado.")
 
 // A declaração de constantes abaixo tem que manter a mesma ordem do cabeçalho CSV.
 const (
@@ -26,10 +29,6 @@ const (
 	QT_EMPENHOS
 	VL_EMPENHOS
 	SIGLA_PARTIDO
-)
-
-const (
-	DB = "heroku_q6gnv76m"
 )
 
 type dadosFornecedor struct {
@@ -48,12 +47,15 @@ type resumoFornecedor struct {
 var dadosFornecedores = make(map[string]*dadosFornecedor)
 
 func main() {
-	dbURI := os.Getenv("MONGODB_URI")
-	if dbURI == "" {
-		log.Fatalf("Variável de ambiente MONGHQ_URL obrigatória.")
-	}
-
 	flag.Parse()
+
+	if *dbURI == "" {
+		log.Fatalf("--dburi flag é obrigatória.")
+	}
+	mgoInfo, err := mgo.ParseURL(*dbURI)
+	if err != nil {
+		log.Fatalf("Erro processando URI:%s err:%q\n", *dbURI, err)
+	}
 
 	nLinhas := 0
 	r := csv.NewReader(bufio.NewReader(os.Stdin))
@@ -131,12 +133,13 @@ func main() {
 		nLinhas++
 	}
 
-	session, err := mgo.Dial(dbURI)
+	session, err := mgo.DialWithInfo(mgoInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
+	session.SetMode(mgo.Monotonic, true)
+
 	defer session.Close()
-	session.SetMode(mgo.Eventual, true)
 
 	fornecedores := make([]interface{}, 0, len(dadosFornecedores))
 	resumos := make(map[string][]interface{})
@@ -160,7 +163,7 @@ func main() {
 
 	// Inserindo fornecedores
 	fmt.Printf("Inserindo %d fornecedores.\n", len(fornecedores))
-	c := session.DB(DB).C("fornecedores")
+	c := session.DB(mgoInfo.Database).C("fornecedores")
 	fornecedoresIndex := mgo.Index{
 		Key:        []string{"id"},
 		Unique:     true,
@@ -179,7 +182,7 @@ func main() {
 
 	// Inserindo Resumos
 	for l, r := range resumos {
-		c := session.DB(DB).C(l)
+		c := session.DB(mgoInfo.Database).C(l)
 		resumoIndex := mgo.Index{
 			Key:        []string{"id"},
 			Unique:     true,

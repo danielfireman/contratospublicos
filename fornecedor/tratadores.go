@@ -17,10 +17,6 @@ import (
 	"github.com/leekchan/accounting"
 )
 
-const (
-	DB = "heroku_q6gnv76m"
-)
-
 type T struct {
 	buscador       *Buscador
 	ac             accounting.Accounting
@@ -29,7 +25,7 @@ type T struct {
 
 // TODO(danielfireman): Refatorar e tirar as páginas renderizadoras de tamplate.
 func Tratadores(fornecedorTmpl *template.Template) (*T, error) {
-	s, err := store.MongoDB(os.Getenv("MONGODB_URI"), DB)
+	s, err := store.MongoDB(os.Getenv("MONGODB_URI"))
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +61,7 @@ func (t *T) TrataAPICall() func(w http.ResponseWriter, r *http.Request, _ httpro
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return
 			}
-			log.Println("Err id:'%s' err:'%q'", id, err)
+			log.Printf("Err id:'%s' err:'%q'\n", id, err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -120,22 +116,27 @@ type partidoVO struct {
 func (t *T) TrataPaginaFornecedor() func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		id, legislatura := extraiParametros(r)
-		if id == "" {
+		if id == "" || len(id) < 15 {
 			http.Error(w, "CNPJ inválido.", http.StatusBadRequest)
 			return
 		}
 		f, err := t.buscador.ColetaDados(id, legislatura)
 		if err != nil {
-			if NaoEncontrado(err) {
-				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-				return
-			}
-			log.Println("Err id:'%s' err:'%q'", id, err)
+			log.Printf("Err id:%s err:%q\n", id, err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
+		if f.ResumoContratos == nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
 		fVO := fornecedorVO{}
-		fVO.Cnpj = f.Cnpj
+		if f.Cnpj == "" {
+			fVO.Cnpj = id[0:3] + "." + id[3:6] + "." + id[6:9] + "/" + id[9:12] + "-" + id[12:]
+		} else {
+			fVO.Cnpj = f.Cnpj
+		}
+
 		fVO.Nome = f.Nome
 		fVO.NomeFantasia = f.NomeFantasia
 		switch f.Legislatura {
@@ -148,14 +149,17 @@ func (t *T) TrataPaginaFornecedor() func(w http.ResponseWriter, r *http.Request,
 			t, _ := time.Parse(time.RFC3339, f.UltimaAtualizacaoReceita)
 			fVO.UltimaAtualizacao = strconv.Itoa(int(time.Now().Sub(t).Hours() / float64(24)))
 		}
-		fVO.EnderecoParte1 = f.Logradouro
-		if f.Numero == "" {
-			fVO.EnderecoParte1 += ", S/N"
-		} else {
-			fVO.EnderecoParte1 += ", " + f.Numero
+
+		if f.Logradouro != "" {
+			fVO.EnderecoParte1 = f.Logradouro
+			if f.Numero == "" {
+				fVO.EnderecoParte1 += ", S/N"
+			} else {
+				fVO.EnderecoParte1 += ", " + f.Numero
+			}
+			fVO.EnderecoParte1 += ", " + f.Bairro
+			fVO.EnderecoParte2 += f.Municipio + "-" + f.UF + ", " + f.CEP
 		}
-		fVO.EnderecoParte1 += ", " + f.Bairro
-		fVO.EnderecoParte2 += f.Municipio + "-" + f.UF + ", " + f.CEP
 		fVO.Telefone = f.Telefone
 		fVO.Tipo = f.Tipo
 		fVO.DataAbertura = f.DataAbertura

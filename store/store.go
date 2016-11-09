@@ -4,6 +4,4 @@ type Store interface {
 	FindByID(c string, id string, ret interface{}) error
 }
 
-type NaoEncontradoErr struct {
-	error
-}
+type NaoEncontradoErr error
