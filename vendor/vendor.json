@@ -15,24 +15,6 @@
 			"revisionTime": "2015-08-22T04:52:52Z"
 		},
 		{
-			"checksumSHA1": "K0crHygPTP42i1nLKWphSlvOQJw=",
-			"path": "github.com/stretchr/objx",
-			"revision": "1a9d0bb9f541897e62256577b352fdbc1fb4fd94",
-			"revisionTime": "2015-09-28T12:21:52Z"
-		},
-		{
-			"checksumSHA1": "1whKo2sIMemLR6Ked08dE/+sRc8=",
-			"path": "github.com/stretchr/testify/assert",
-			"revision": "2b15294402a895a4224659d181866f545991021e",
-			"revisionTime": "2015-09-29T18:35:40Z"
-		},
-		{
-			"checksumSHA1": "kYohRlsxMkEXl4JFU9ZNyIjo9bk=",
-			"path": "github.com/stretchr/testify/mock",
-			"revision": "2b15294402a895a4224659d181866f545991021e",
-			"revisionTime": "2015-09-29T18:35:40Z"
-		},
-		{
 			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
 			"path": "gopkg.in/mgo.v2",
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
