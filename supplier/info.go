@@ -33,14 +33,14 @@ type Atividade struct {
 
 type ResumoContratosFornecedor struct {
 	ValorContratos float64      `json:"valor,omitempty"`
-	NumContratos   int64        `json:"quantidade,omitempty"`
+	NumContratos   int32        `json:"quantidade,omitempty"`
 	Municipios     []*Municipio `json:"municipios,omitempty"`
 	Partidos       []*Partido   `json:"partidos,omitempty"`
 }
 
 // TODO(danielfireman): Remove this (make it flat like in ContractsSummary
 type ResumoContratos struct {
-	Quantidade int64   `json:"quantidade,omitempty"`
+	Quantidade int32   `json:"quantidade,omitempty"`
 	Valor      float64 `json:"valor,omitempty"`
 }
 

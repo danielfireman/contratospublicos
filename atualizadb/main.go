@@ -10,10 +10,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/danielfireman/contratospublicos/fornecedor"
-	"github.com/danielfireman/contratospublicos/model"
-
 	"gopkg.in/mgo.v2"
+	"github.com/danielfireman/contratospublicos/supplier"
 )
 
 var dbURI = flag.String("dburi", "", "URI completa do mongo db que vai ser populado.")
@@ -30,16 +28,17 @@ const (
 	SIGLA_PARTIDO
 )
 
+// TODO(danielfireman): Translate eveyrthing to English.
 type dadosFornecedor struct {
-	fornecedor *fornecedor.FornecedorDB
 	resumo     map[string]*resumoFornecedor
 }
 
 type resumoFornecedor struct {
+	id string
 	valor      float64
-	num        int64
-	municipios map[string]*model.Municipio
-	partidos   map[string]*model.Partido
+	num        int32
+	municipios map[string]*supplier.City
+	partidos   map[string]*supplier.Party
 }
 
 // Mapeia fornecedores referentes a uma determinada legislatura
@@ -74,10 +73,6 @@ func main() {
 		dados, ok := dadosFornecedores[id]
 		if !ok {
 			dados = &dadosFornecedor{
-				fornecedor: &fornecedor.FornecedorDB{
-					ID:   id,
-					Nome: linha[NOME_FORNECEDOR],
-				},
 				resumo: make(map[string]*resumoFornecedor),
 			}
 			dadosFornecedores[id] = dados
@@ -86,13 +81,14 @@ func main() {
 		resumo, ok := dados.resumo[legislatura]
 		if !ok {
 			resumo = &resumoFornecedor{
-				municipios: make(map[string]*model.Municipio),
-				partidos:   make(map[string]*model.Partido),
+				id: id,
+				municipios: make(map[string]*supplier.City),
+				partidos:   make(map[string]*supplier.Party),
 			}
 			dados.resumo[legislatura] = resumo
 		}
 
-		qtContratos, err := strconv.ParseInt(linha[QT_EMPENHOS], 10, 64)
+		qtContratos, err := strconv.ParseInt(linha[QT_EMPENHOS], 10, 32)
 		if err != nil {
 			log.Fatalf("Error processando a linha '%v': %q", linha, err)
 		}
@@ -101,7 +97,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error processando a linha '%v': %q", linha, err)
 		}
-		resumo.num += qtContratos
+		resumo.num += int32(qtContratos)
 		resumo.valor += valorContratos
 
 		codMunicipio := linha[COD_MUNICIPIO]
@@ -109,27 +105,45 @@ func main() {
 
 		m, ok := resumo.municipios[codMunicipio]
 		if !ok {
-			m = &model.Municipio{
-				Cod:          codMunicipio,
-				SiglaPartido: siglaPartido,
-				//Nome: nomeMunicipio,
+			m = &supplier.City{
+				ID:          codMunicipio,
+				PartyInitials: siglaPartido,
 			}
 			resumo.municipios[codMunicipio] = m
 		}
-		m.ResumoContratos.Quantidade += qtContratos
-		m.ResumoContratos.Valor += valorContratos
+		m.NumContracts += int32(qtContratos)
+		m.AmountCountracts += valorContratos
 
 		// Pegando informações sobre o partido e resumindo.
 		p, ok := resumo.partidos[siglaPartido]
 		if !ok {
-			p = &model.Partido{
-				Sigla: siglaPartido,
+			p = &supplier.Party{
+				Initials: siglaPartido,
 			}
 			resumo.partidos[siglaPartido] = p
 		}
-		p.ResumoContratos.Quantidade += qtContratos
-		p.ResumoContratos.Valor += valorContratos
+		p.NumContracts += int32(qtContratos)
+		p.AmountCountracts += valorContratos
 		nLinhas++
+	}
+
+	fmt.Println("Processed ", nLinhas, " rows")
+	resumos := make(map[string][]interface{})
+	for _, d := range dadosFornecedores {
+		for l, r := range d.resumo {
+			resumo := &supplier.ContractsSummary{
+				ID:             r.id,
+				AmountContracts: r.valor,
+				NumContracts:   r.num,
+			}
+			for _, m := range r.municipios {
+				resumo.Cities = append(resumo.Cities, m)
+			}
+			for _, p := range r.partidos {
+				resumo.Parties = append(resumo.Parties, p)
+			}
+			resumos[l] = append(resumos[l], resumo)
+		}
 	}
 
 	session, err := mgo.DialWithInfo(mgoInfo)
@@ -137,49 +151,8 @@ func main() {
 		log.Fatal(err)
 	}
 	session.SetMode(mgo.Monotonic, true)
-
 	defer session.Close()
 
-	fornecedores := make([]interface{}, 0, len(dadosFornecedores))
-	resumos := make(map[string][]interface{})
-	for _, d := range dadosFornecedores {
-		fornecedores = append(fornecedores, d.fornecedor)
-		for l, r := range d.resumo {
-			resumo := &fornecedor.ResumoContratosDB{
-				ID:             d.fornecedor.ID,
-				ValorContratos: r.valor,
-				NumContratos:   r.num,
-			}
-			for _, m := range r.municipios {
-				resumo.Municipios = append(resumo.Municipios, m)
-			}
-			for _, p := range r.partidos {
-				resumo.Partidos = append(resumo.Partidos, p)
-			}
-			resumos[l] = append(resumos[l], resumo)
-		}
-	}
-
-	// Inserindo fornecedores
-	fmt.Printf("Inserindo %d fornecedores.\n", len(fornecedores))
-	c := session.DB(mgoInfo.Database).C("fornecedores")
-	fornecedoresIndex := mgo.Index{
-		Key:        []string{"id"},
-		Unique:     true,
-		DropDups:   true,
-		Background: true,
-		Sparse:     true,
-	}
-	err = c.EnsureIndex(fornecedoresIndex)
-	if err != nil {
-		log.Fatalf("Erro criando índice: %q", err)
-	}
-	if err := c.Insert(fornecedores...); err != nil {
-		log.Fatalf("Erro inserindo fornecedores: %q", err)
-	}
-	fmt.Printf("%d fornecedores inseridos com sucesso.\n", len(fornecedores))
-
-	// Inserindo Resumos
 	for l, r := range resumos {
 		c := session.DB(mgoInfo.Database).C(l)
 		resumoIndex := mgo.Index{

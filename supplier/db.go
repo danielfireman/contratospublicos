@@ -48,7 +48,10 @@ func (db *db) FetchSummaryData(errChan chan error, id, legislature string, suppl
 		return
 	}
 	// TODO(danielfireman): Fix this Enlgish PT hoge-podge in an next commit.
-	supplier.ResumoContratos = &ResumoContratosFornecedor{}
+	supplier.ResumoContratos = &ResumoContratosFornecedor{
+		ValorContratos:cs.AmountContracts,
+		NumContratos:cs.NumContracts,
+	}
 	for _, c := range cs.Cities {
 		supplier.ResumoContratos.Municipios = append(supplier.ResumoContratos.Municipios, &Municipio{
 			Cod:          c.ID,
@@ -97,7 +100,7 @@ func NotFound(err error) bool {
 type City struct {
 	ID               string  `bson:"cod,omitempty"`
 	Name             string  `bson:"nome,omitempty"`
-	NumContracts     int64   `bson:"qtd_contratos,omitempty"`
+	NumContracts     int32   `bson:"qtd_contratos,omitempty"`
 	AmountCountracts float64 `bson:"valor_contratos,omitempty"`
 	PartyInitials    string  `bson:"sigla,omitempty"`
 }
@@ -105,7 +108,7 @@ type City struct {
 // PartyDataModel holds data about the relationship between a supplier and a certain city.
 type Party struct {
 	Initials         string  `bson:"sigla,omitempty"`
-	NumContracts     int64   `bson:"qtd_contratos,omitempty"`
+	NumContracts     int32  `bson:"qtd_contratos,omitempty"`
 	AmountCountracts float64 `bson:"valor_contratos,omitempty"`
 }
 
@@ -113,7 +116,7 @@ type Party struct {
 type ContractsSummary struct {
 	ID              string   `bson:"id,omitempty"`
 	AmountContracts float64  `bson:"valor_contratos,omitempty"`
-	NumContracts    int64    `bson:"num_contratos,omitempty"`
+	NumContracts    int32    `bson:"num_contratos,omitempty"`
 	Cities          []*City  `bson:"municipios,omitempty"`
 	Parties         []*Party `bson:"partidos,omitempty"`
 }
