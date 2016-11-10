@@ -10,7 +10,6 @@ import (
 	"os"
 	"strconv"
 
-
 	"github.com/danielfireman/contratospublicos/fornecedor"
 	"github.com/danielfireman/contratospublicos/model"
 

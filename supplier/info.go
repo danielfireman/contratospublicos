@@ -1,5 +1,6 @@
-package model
+package supplier
 
+// TODO(danielfireman): Translate to English
 type Fornecedor struct {
 	ID                       string                     `json:"id,omitempty"`
 	Nome                     string                     `json:"nome,omitempty"`
@@ -37,19 +38,20 @@ type ResumoContratosFornecedor struct {
 	Partidos       []*Partido   `json:"partidos,omitempty"`
 }
 
+// TODO(danielfireman): Remove this (make it flat like in ContractsSummary
 type ResumoContratos struct {
-	Quantidade int64   `bson:"quantidade,omitempty" json:"quantidade,omitempty"`
-	Valor      float64 `bson:"valor,omitempty" json:"valor,omitempty"`
+	Quantidade int64   `json:"quantidade,omitempty"`
+	Valor      float64 `json:"valor,omitempty"`
 }
 
 type Municipio struct {
-	Cod             string          `bson:"cod,omitempty" json:"cod,omitempty"`
-	Nome            string          `bson:"nome,omitempty" json:"nome,omitempty"`
-	ResumoContratos ResumoContratos `bson:"resumo_contratos,omitempty" json:"resumo_contratos,omitempty"`
-	SiglaPartido    string          `bson:"sigla,omitempty" json:"sigla,omitempty"`
+	Cod             string          `json:"cod,omitempty"`
+	Nome            string          `json:"nome,omitempty"`
+	ResumoContratos ResumoContratos `json:"resumo_contratos,omitempty"`
+	SiglaPartido    string          `json:"sigla,omitempty"`
 }
 
 type Partido struct {
-	Sigla           string          `bson:"sigla,omitempty" json:"sigla,omitempty"`
-	ResumoContratos ResumoContratos `bson:"resumo_contratos,omitempty" json:"resumo_contratos,omitempty"`
+	Sigla           string          `json:"sigla,omitempty"`
+	ResumoContratos ResumoContratos `json:"resumo_contratos,omitempty"`
 }
