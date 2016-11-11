@@ -25,6 +25,7 @@ Existe um esforço grande no projeto para utilização de ferramentas de
 livres, gratuitas e/ou código fonte aberto. Dentre as quais, destacamos:
 
 * Backend: Escrito utilizando a linguagem de programação [Go](https://golang.org)
+* DNS/CDN: [Cloudflare](https://cloudflare.com)
 * Frontend: HTML+CSS (bootstrap)+JS
 * Integração contínua: [TravisCI][build-status]
 * Cobertura de testes: [Coveralls.io][cov-status]
